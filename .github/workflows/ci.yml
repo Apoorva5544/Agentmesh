@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: agentmesh
+          POSTGRES_PASSWORD: agentmesh
+          POSTGRES_DB: agentmesh
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U agentmesh -d agentmesh"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://agentmesh:agentmesh@localhost:5432/agentmesh
+      REDIS_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Run unit tests with coverage
+        run: pytest --cov=app --cov-report=xml --cov-report=term-missing --cov-fail-under=60
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          fail_ci_if_error: false
+
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: agentmesh
+          POSTGRES_PASSWORD: agentmesh
+          POSTGRES_DB: agentmesh
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U agentmesh -d agentmesh"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://agentmesh:agentmesh@localhost:5432/agentmesh
+      REDIS_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Boot gateway and exercise control plane
+        run: |
+          uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          APP_PID=$!
+          trap "kill $APP_PID" EXIT
+          sleep 6
+          curl -fsS http://127.0.0.1:8000/health
+          curl -fsS -X POST http://127.0.0.1:8000/v1/mcp/registry \
+            -H 'Content-Type: application/json' \
+            -d '{"name":"local_tools","endpoint":"builtin://local"}'
+          curl -fsS -X POST http://127.0.0.1:8000/v1/mcp/invoke \
+            -H 'Content-Type: application/json' \
+            -d '{"server":"local_tools","tool":"echo","arguments":{"text":"ci ok"}}'
+          curl -fsS -X POST http://127.0.0.1:8000/v1/agents/ci_bot/run \
+            -H 'Content-Type: application/json' \
+            -d '{"agent_id":"ci_bot","actions":[{"type":"mcp","server":"local_tools","tool":"echo","arguments":{"text":"step 1"}}]}'
+          curl -fsS -X GET http://127.0.0.1:8000/dashboard | grep -q "AgentMesh"

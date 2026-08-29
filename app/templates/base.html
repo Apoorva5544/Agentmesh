@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}AgentMesh{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='dashboard.css') }}">
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">AgentMesh &middot; AI Agent Control Plane</p>
+          <h1>{% block heading %}AgentMesh{% endblock %}</h1>
+        </div>
+        <a class="docs-link" href="/docs">API Docs</a>
+      </header>
+
+      <nav class="tabs">
+        <a href="/dashboard" class="{{ 'active' if active == 'overview' }}">Overview</a>
+        <a href="/dashboard/agents" class="{{ 'active' if active == 'agents' }}">Agents &amp; Budgets</a>
+        <a href="/dashboard/mcp" class="{{ 'active' if active == 'mcp' }}">MCP Gateway</a>
+        <a href="/dashboard/budgets" class="{{ 'active' if active == 'budgets' }}">Alerts</a>
+        <a href="/dashboard/keys" class="{{ 'active' if active == 'keys' }}">API Keys</a>
+      </nav>
+
+      {% block content %}{% endblock %}
+      <footer>AgentMesh &mdash; every agent run, every tool call, every rupee.</footer>
+    </main>
+  </body>
+</html>

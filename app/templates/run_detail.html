@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block heading %}Run Trace{% endblock %}
+{% block content %}
+
+<section class="metrics-grid">
+  <article class="metric">
+    <span>Run</span>
+    <strong class="mono" style="font-size:15px">{{ run.run_id }}</strong>
+    <div class="sub">agent: {{ run.agent_id }}</div>
+  </article>
+  <article class="metric">
+    <span>Total Cost</span>
+    <strong>&#8377;{{ "%.2f"|format(run.total_cost_inr or 0) }}</strong>
+    <div class="sub">LLM + MCP tool calls</div>
+  </article>
+  <article class="metric">
+    <span>Latency</span>
+    <strong>{{ "%.1f"|format((run.total_latency_ms or 0) / 1000) }}s</strong>
+    <div class="sub">{{ run.step_count }} steps</div>
+  </article>
+  <article class="metric">
+    <span>Cache Hits / Retries</span>
+    <strong>{{ run.cache_hits }} / {{ run.retry_count }}</strong>
+    <div class="sub">cached steps &middot; retried calls</div>
+  </article>
+</section>
+
+<section class="panel">
+  <h2>Trace Timeline</h2>
+  {% for step in steps %}
+  <div class="trace-step">
+    <div><span class="step-no">#{{ step.step_no }}</span></div>
+    <div class="type {{ step.step_type }}">{{ 'LLM' if step.step_type == 'llm' else 'MCP' }}</div>
+    <div>
+      {% if step.step_type == 'llm' %}
+        <span class="mono">{{ step.provider }} / {{ step.model }}</span>
+        <span class="muted">&middot; in {{ step.tokens_in }} + out {{ step.tokens_out }}</span>
+        {% if step.cache_hit %}<span class="badge green">cache hit</span>{% endif %}
+      {% else %}
+        <span class="mono">{{ step.tool }}</span>
+        {% if step.retried %}<span class="badge yellow">retried</span>{% endif %}
+      {% endif %}
+      {% if step.error %}<span class="badge red" title="{{ step.error }}">error</span>{% endif %}
+    </div>
+    <div class="cost">&#8377;{{ "%.4f"|format(step.cost_inr or 0) }}</div>
+    <div class="latency">{{ "%.0f"|format(step.latency_ms or 0) }}ms</div>
+    <div class="bar">
+      <i style="width: {{ [100, (step.cost_inr or 0) / (run.total_cost_inr or 1) * 160]|min }}%"></i>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty">No trace steps in this run.</div>
+  {% endfor %}
+
+  {% set llm_cost = steps|selectattr('step_type', 'equalto', 'llm')|sum(attribute='cost_inr') %}
+  {% set mcp_cost = steps|selectattr('step_type', 'equalto', 'mcp')|sum(attribute='cost_inr') %}
+  {% set saved = steps|sum(attribute='saved_cost_inr') %}
+  <div class="opt-hint">
+    Breakdown: LLM &#8377;{{ "%.2f"|format(llm_cost) }} &middot; MCP tools &#8377;{{ "%.2f"|format(mcp_cost) }} &middot;
+    retries &#8377;0 &middot; cache + compression saved &#8377;{{ "%.2f"|format(saved) }}.
+  </div>
+</section>
+
+<p><a href="javascript:history.back()">&larr; Back</a></p>
+{% endblock %}

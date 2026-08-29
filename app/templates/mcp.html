@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block heading %}MCP Gateway{% endblock %}
+{% block content %}
+
+<section class="panel">
+  <h2>Registered MCP Servers</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Server</th><th>Endpoint</th><th>Rate</th><th>Cost/Call</th>
+          <th>Enabled</th><th>Health</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for server in servers %}
+        <tr>
+          <td>{{ server.name }}</td>
+          <td class="mono">{{ server.endpoint }}</td>
+          <td>{{ server.rate_limit_rpm }}/min</td>
+          <td>&#8377;{{ "%.2f"|format(server.cost_per_call_inr or 0) }}</td>
+          <td>{{ server.enabled|string }}</td>
+          <td>
+            {% if server.health == 'ok' %}<span class="badge green">ok</span>
+            {% elif server.health == 'error' %}<span class="badge red" title="{{ server.error }}">error</span>
+            {% else %}<span class="badge gray">unknown</span>{% endif %}
+          </td>
+          <td><span class="badge purple">MCP</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty">
+          No MCP servers registered. Register one via <span class="mono">POST /v1/mcp/registry</span>:
+          <div class="code" style="margin-top:12px">{"name":"postgres_tools","endpoint":"http://localhost:3001/sse","auth_type":"bearer","auth_token":"...","cost_per_call_inr":0.0}</div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Invoke Through the Gateway</h2>
+  <div class="code">curl -X POST http://localhost:8000/v1/mcp/invoke \
+  -H "Authorization: Bearer sk-..." -H "Content-Type: application/json" \
+  -d '{"server":"postgres_tools","tool":"execute_query","arguments":{"query":"SELECT 1"}}'</div>
+  <p class="muted">Every invoke is rate-limited, audited into the agent trace, and attributed with its per-call cost.</p>
+</section>
+
+{% endblock %}

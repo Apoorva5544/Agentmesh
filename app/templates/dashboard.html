@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block heading %}Control Plane Overview{% endblock %}
+{% block content %}
+
+<section class="metrics-grid">
+  <article class="metric">
+    <span>Requests</span>
+    <strong>{{ data.totals.requests or 0 }}</strong>
+    <div class="sub">LLM calls through the gateway</div>
+  </article>
+  <article class="metric">
+    <span>Cache Hit Rate</span>
+    <strong>{{ data.totals.cache_hit_rate }}%</strong>
+    <div class="sub">semantic cache</div>
+  </article>
+  <article class="metric">
+    <span>Month Spend</span>
+    <strong>&#8377;{{ "%.2f"|format(data.month_totals.cost or 0) }}</strong>
+    <div class="sub">&#8377;{{ "%.2f"|format(data.month_totals.cost_saved or 0) }} saved in month</div>
+  </article>
+  <article class="metric">
+    <span>All-time Saved</span>
+    <strong>&#8377;{{ "%.2f"|format(data.totals.cost_saved or 0) }}</strong>
+    <div class="sub">from cache + compression</div>
+  </article>
+  <article class="metric">
+    <span>Tokens Saved</span>
+    <strong>{{ data.totals.tokens_saved or 0 }}</strong>
+    <div class="sub">compression + cache</div>
+  </article>
+  <article class="metric">
+    <span>PII Redactions</span>
+    <strong>{{ data.totals.pii_redactions or 0 }}</strong>
+    <div class="sub">Aadhaar / PAN / phone / email masked pre-provider</div>
+  </article>
+  <article class="metric">
+    <span>JSON Schema Compliance</span>
+    <strong>
+      {% if data.totals.schema_compliance_rate is not none %}{{ data.totals.schema_compliance_rate }}%{% else %}n/a{% endif %}
+    </strong>
+    <div class="sub">{{ data.totals.schema_requests or 0 }} schema-guarded responses</div>
+  </article>
+</section>
+
+<div class="grid-2">
+  <section class="panel">
+    <h2>Spend by Model</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Model</th><th>Requests</th><th>Cache</th><th>Cost</th><th>Saved</th></tr></thead>
+        <tbody>
+          {% for row in data.by_model %}
+          <tr>
+            <td class="mono">{{ row.provider }} / {{ row.model }}</td>
+            <td>{{ row.requests }}</td>
+            <td>{{ row.cache_hits }}</td>
+            <td>&#8377;{{ "%.2f"|format(row.cost_inr or 0) }}</td>
+            <td>&#8377;{{ "%.2f"|format(row.cost_saved or 0) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="empty">No LLM traffic recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>MCP Tool Spend</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tool</th><th>Calls</th><th>Cost</th></tr></thead>
+        <tbody>
+          {% for row in data.by_tool %}
+          <tr>
+            <td class="mono">{{ row.tool }}</td>
+            <td>{{ row.calls }}</td>
+            <td>&#8377;{{ "%.2f"|format(row.cost_inr or 0) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3" class="empty">No MCP tool calls yet. Register a server then invoke tools.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<section class="panel">
+  <h2>Recent Agent Runs</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Run</th><th>Agent</th><th>Time</th><th>Steps</th><th>Cache</th><th>Cost</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for run in data.recent_runs %}
+        <tr>
+          <td class="mono"><a class="nav" href="/dashboard/runs/{{ run.run_id }}">{{ run.run_id }}</a></td>
+          <td>{{ run.agent_id }}</td>
+          <td>{{ run.created_at }}</td>
+          <td>{{ run.step_count }}</td>
+          <td>{{ run.cache_hits }}</td>
+          <td>&#8377;{{ "%.2f"|format(run.total_cost_inr or 0) }}</td>
+          <td>
+            {% if run.status == 'completed' %}<span class="badge green">completed</span>
+            {% elif run.status == 'failed' %}<span class="badge red">failed</span>
+            {% else %}<span class="badge gray">{{ run.status }}</span>{% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty">No agent runs yet. Try <span class="mono">/v1/agents/demo/run</span>.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Spend by Agent</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Agent</th><th>Requests</th><th>Cost</th><th>Saved</th><th>Cache Hits</th></tr></thead>
+      <tbody>
+        {% for row in data.by_agent %}
+        <tr>
+          <td>{{ row.agent_id }}</td>
+          <td>{{ row.requests }}</td>
+          <td>&#8377;{{ "%.2f"|format(row.cost_inr or 0) }}</td>
+          <td>&#8377;{{ "%.2f"|format(row.cost_saved or 0) }}</td>
+          <td>{{ row.cache_hits }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="empty">No agent-attributed usage yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}

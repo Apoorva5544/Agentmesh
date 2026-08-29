@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block heading %}Agents &amp; Budget Enforcement{% endblock %}
+{% block content %}
+
+<section class="panel">
+  <h2>Configured Agents</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Agent</th><th>Budget / Month</th><th>Spend</th><th>Usage</th>
+          <th>Status</th><th>Fallback Model</th><th>Hard Limit</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for agent in agents %}
+        <tr>
+          <td>{{ agent.agent_id }}{% if agent.display_name %}<div class="muted">{{ agent.display_name }}</div>{% endif %}</td>
+          <td>&#8377;{{ "%.0f"|format(agent.monthly_budget_inr or 0) }}</td>
+          <td>&#8377;{{ "%.2f"|format(agent.spend_inr or 0) }}</td>
+          <td>
+            <div class="bar {% if agent.status == 'warn' %}yellow{% elif agent.status == 'blocked' %}red{% else %}green{% endif %}">
+              <i style="width: {{ [100, (agent.ratio or 0) * 100]|min }}%"></i>
+            </div>
+            <span class="muted">{{ "%.0f"|format((agent.ratio or 0) * 100) }}%</span>
+          </td>
+          <td>
+            {% if agent.status == 'blocked' %}<span class="badge red">blocked</span>
+            {% elif agent.status == 'warn' %}<span class="badge yellow">warn</span>
+            {% elif agent.status == 'ok' %}<span class="badge green">ok</span>
+            {% else %}<span class="badge gray">unconfigured</span>{% endif %}
+          </td>
+          <td class="mono">{{ agent.fallback_model or '—' }}</td>
+          <td>{{ 'yes' if agent.hard_limit else 'no' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty">
+          No agents configured. Register one via <span class="mono">POST /v1/admin/agents</span>:
+          <div class="code" style="margin-top:12px">{"agent_id":"support_bot","monthly_budget_inr":5000,"hard_limit":true,"fallback_model":"sarvam-1-lite"}</div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>How Budget Enforcement Works</h2>
+  <ul class="muted">
+    <li>Thresholds (default <span class="mono">0.5 / 0.8 / 0.95</span>) fire one alert each per month - recorded in the Alerts tab.</li>
+    <li>At the <span class="mono">warn</span> threshold the gateway auto-routes to the agent's cheaper <span class="mono">fallback_model</span>.</li>
+    <li>With <span class="mono">hard_limit=true</span>, requests are rejected with HTTP 402 once the budget is exhausted.</li>
+  </ul>
+</section>
+
+{% endblock %}

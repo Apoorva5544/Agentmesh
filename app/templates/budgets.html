@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block heading %}Budget Alerts{% endblock %}
+{% block content %}
+
+<section class="panel">
+  <h2>Agent Budget Snapshot</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Agent</th><th>Spend</th><th>Budget</th><th>Ratio</th><th>Status</th><th>Thresholds</th></tr></thead>
+      <tbody>
+        {% for agent in agents %}
+        <tr>
+          <td>{{ agent.agent_id }}</td>
+          <td>&#8377;{{ "%.2f"|format(agent.spend_inr or 0) }}</td>
+          <td>&#8377;{{ "%.0f"|format(agent.monthly_budget_inr or 0) }}</td>
+          <td>{{ "%.0f"|format((agent.ratio or 0) * 100) }}%</td>
+          <td>
+            {% if agent.status == 'blocked' %}<span class="badge red">blocked</span>
+            {% elif agent.status == 'warn' %}<span class="badge yellow">warn</span>
+            {% elif agent.status == 'ok' %}<span class="badge green">ok</span>
+            {% else %}<span class="badge gray">unconfigured</span>{% endif %}
+          </td>
+          <td class="mono">{{ agent.alert_thresholds }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="empty">No agents configured.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Alert History</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Time</th><th>Agent</th><th>Threshold</th><th>Spend</th><th>Budget</th></tr></thead>
+      <tbody>
+        {% for alert in alerts %}
+        <tr>
+          <td>{{ alert.created_at }}</td>
+          <td>{{ alert.agent_id }}</td>
+          <td>{{ "%.0f"|format(alert.threshold * 100) }}%</td>
+          <td>&#8377;{{ "%.2f"|format(alert.spend_inr) }}</td>
+          <td>&#8377;{{ "%.2f"|format(alert.budget_inr) }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="empty">No alerts fired. Alerts fire once per threshold per month.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}
