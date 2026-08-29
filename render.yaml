@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: agentmesh
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: Oregon
+    numInstances: 1
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      # Secrets are `sync: false` - set them in the Render dashboard
+      # after the Blueprint is created (values shared separately).
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SARVAM_API_KEY
+        sync: false
+      - key: ADMIN_API_KEY
+        sync: false
+      # Non-secret configuration values.
+      - key: APP_NAME
+        value: AgentMesh
+      - key: DEFAULT_PROVIDER
+        value: openai
+      - key: DEFAULT_MODEL
+        value: gpt-4o-mini
+      - key: ALLOW_NO_AUTH
+        value: "false"
+      - key: DB_POOL_MIN_SIZE
+        value: "1"
+      - key: DB_POOL_MAX_SIZE
+        value: "5"
+      - key: OTEL_ENABLED
+        value: "false"
