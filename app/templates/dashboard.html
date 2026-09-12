@@ -2,6 +2,9 @@
 {% block heading %}Control Plane Overview{% endblock %}
 {% block content %}
 
+{% set demo_empty = data.totals.requests == 0 %}
+{% include "demo_banner.html" %}
+
 <section class="metrics-grid">
   <article class="metric">
     <span>Requests</span>

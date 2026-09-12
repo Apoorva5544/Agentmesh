@@ -2,6 +2,9 @@
 {% block heading %}Agents &amp; Budget Enforcement{% endblock %}
 {% block content %}
 
+{% set demo_empty = agents|length == 0 %}
+{% include "demo_banner.html" %}
+
 <section class="panel">
   <h2>Configured Agents</h2>
   <div class="table-wrap">

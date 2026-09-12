@@ -220,13 +220,22 @@ class Database:
             return await conn.fetch("SELECT * FROM agents ORDER BY agent_id")
 
     # ------------------------------------------------------------------- runs
-    async def create_run(self, run_id: str, agent_id: str) -> None:
+    async def create_run(self, run_id: str, agent_id: str, created_at: dt.datetime | None = None) -> None:
         async with self.pool.acquire() as conn:
-            await conn.execute(
-                "INSERT INTO runs (run_id, agent_id) VALUES ($1, $2) ON CONFLICT (run_id) DO NOTHING",
-                run_id,
-                agent_id,
-            )
+            if created_at is None:
+                await conn.execute(
+                    "INSERT INTO runs (run_id, agent_id) VALUES ($1, $2) ON CONFLICT (run_id) DO NOTHING",
+                    run_id,
+                    agent_id,
+                )
+            else:
+                await conn.execute(
+                    "INSERT INTO runs (run_id, agent_id, created_at) VALUES ($1, $2, $3)"
+                    " ON CONFLICT (run_id) DO NOTHING",
+                    run_id,
+                    agent_id,
+                    created_at,
+                )
 
     async def add_trace_step(self, run_id: str, step: dict) -> None:
         async with self.pool.acquire() as conn:
@@ -318,33 +327,61 @@ class Database:
             )
 
     # ----------------------------------------------------------------- usage
-    async def record_usage(self, event: dict) -> None:
+    async def record_usage(self, event: dict, created_at: dt.datetime | None = None) -> None:
         async with self.pool.acquire() as conn:
-            await conn.execute(
-                """
-                INSERT INTO usage_events (
-                    run_id, agent_id, provider, model, route, cache_hit,
-                    prompt_tokens, compressed_prompt_tokens, completion_tokens,
-                    tokens_saved, estimated_cost_inr, estimated_cost_saved_inr,
-                    pii_redactions, schema_requested, schema_passed
-                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-                """,
-                event.get("run_id"),
-                event.get("agent_id", "default"),
-                event["provider"],
-                event["model"],
-                event["route"],
-                bool(event.get("cache_hit", False)),
-                event.get("prompt_tokens", 0),
-                event.get("compressed_prompt_tokens", 0),
-                event.get("completion_tokens", 0),
-                event.get("tokens_saved", 0),
-                event.get("estimated_cost_inr", 0.0),
-                event.get("estimated_cost_saved_inr", 0.0),
-                event.get("pii_redactions", 0),
-                bool(event.get("schema_requested", False)),
-                event.get("schema_passed"),
-            )
+            if created_at is None:
+                await conn.execute(
+                    """
+                    INSERT INTO usage_events (
+                        run_id, agent_id, provider, model, route, cache_hit,
+                        prompt_tokens, compressed_prompt_tokens, completion_tokens,
+                        tokens_saved, estimated_cost_inr, estimated_cost_saved_inr,
+                        pii_redactions, schema_requested, schema_passed
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+                    """,
+                    event.get("run_id"),
+                    event.get("agent_id", "default"),
+                    event["provider"],
+                    event["model"],
+                    event["route"],
+                    bool(event.get("cache_hit", False)),
+                    event.get("prompt_tokens", 0),
+                    event.get("compressed_prompt_tokens", 0),
+                    event.get("completion_tokens", 0),
+                    event.get("tokens_saved", 0),
+                    event.get("estimated_cost_inr", 0.0),
+                    event.get("estimated_cost_saved_inr", 0.0),
+                    event.get("pii_redactions", 0),
+                    bool(event.get("schema_requested", False)),
+                    event.get("schema_passed"),
+                )
+            else:
+                await conn.execute(
+                    """
+                    INSERT INTO usage_events (
+                        run_id, agent_id, provider, model, route, cache_hit,
+                        prompt_tokens, compressed_prompt_tokens, completion_tokens,
+                        tokens_saved, estimated_cost_inr, estimated_cost_saved_inr,
+                        pii_redactions, schema_requested, schema_passed, created_at
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+                    """,
+                    event.get("run_id"),
+                    event.get("agent_id", "default"),
+                    event["provider"],
+                    event["model"],
+                    event["route"],
+                    bool(event.get("cache_hit", False)),
+                    event.get("prompt_tokens", 0),
+                    event.get("compressed_prompt_tokens", 0),
+                    event.get("completion_tokens", 0),
+                    event.get("tokens_saved", 0),
+                    event.get("estimated_cost_inr", 0.0),
+                    event.get("estimated_cost_saved_inr", 0.0),
+                    event.get("pii_redactions", 0),
+                    bool(event.get("schema_requested", False)),
+                    event.get("schema_passed"),
+                    created_at,
+                )
 
     async def monthly_spend_inr(self, agent_id: str) -> float:
         start = dt.datetime.now(dt.UTC).replace(day=1, hour=0, minute=0, second=0, microsecond=0)

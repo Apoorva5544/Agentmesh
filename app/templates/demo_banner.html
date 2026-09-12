@@ -1,0 +1,25 @@
+{% if demo_empty %}
+<script>
+async function seedDemo() {
+  const btn = document.getElementById('seed-demo-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Seeding\u2026'; }
+  try {
+    const res = await fetch('/demo/seed', { method: 'POST' });
+    if (res.ok) { location.reload(); return; }
+    let msg = 'Failed to seed demo data';
+    try { msg = (await res.json()).detail || msg; } catch (_) {}
+    alert(msg);
+  } catch (err) {
+    alert('Seeding failed: ' + err);
+  }
+  if (btn) { btn.disabled = false; btn.textContent = 'Load demo data'; }
+}
+</script>
+<section class="panel demo-empty">
+  <div>
+    <strong style="color:var(--text-heading);font-size:14px;">This dashboard is empty</strong>
+    <p class="muted" style="margin:4px 0 0;">Load a realistic slice of gateway activity &mdash; agents, budgets, MCP tools, costs and traces &mdash; so you can click around and run the API examples.</p>
+  </div>
+  <button type="button" class="action" id="seed-demo-btn" onclick="seedDemo()">Load demo data</button>
+</section>
+{% endif %}

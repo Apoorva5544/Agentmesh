@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AgentMesh — AI Agent Control Plane</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='dashboard.css') }}">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">AgentMesh &middot; AI Agent Control Plane</p>
+          <h1>LLM Gateway + MCP orchestration + real-time cost intelligence</h1>
+        </div>
+        <nav style="display:flex;gap:20px;">
+          <a href="/dashboard" class="docs-link">Live Dashboard</a>
+          <a href="/docs" class="docs-link">API Docs</a>
+        </nav>
+      </header>
+
+      <section style="max-width:760px;margin-bottom:48px;">
+        <p class="eyebrow" style="margin:0 0 8px;">The infrastructure layer for production AI agents</p>
+        <p style="font-size:15px;margin:0;">
+          Every LLM call <em>and</em> MCP tool call your agents make passes through one gateway.
+          AgentMesh traces it, prices it in INR, caches it, enforces budgets, blocks PII, and
+          renders a live cost dashboard — so you always know exactly where every rupee goes.
+        </p>
+        <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;">
+          <a class="badge green" style="padding:10px 18px;text-decoration:none;" href="/dashboard">Open Live Dashboard &rarr;</a>
+          <a class="badge" style="padding:10px 18px;text-decoration:none;" href="/docs">Explore API Docs</a>
+        </div>
+      </section>
+
+      {% set demo_empty = data.totals.requests == 0 %}
+      {% include "demo_banner.html" %}
+
+      <section class="metrics-grid">
+        <article class="metric">
+          <span>Requests</span>
+          <strong>{{ data.month_totals.requests or 0 }}</strong>
+          <div class="sub">this month through the gateway</div>
+        </article>
+        <article class="metric">
+          <span>Month Spend</span>
+          <strong>&#8377;{{ "%.2f"|format(data.month_totals.cost or 0) }}</strong>
+          <div class="sub">LLM tokens + MCP tool calls</div>
+        </article>
+        <article class="metric">
+          <span>Cache Hit Rate</span>
+          <strong>{{ data.totals.cache_hit_rate }}%</strong>
+          <div class="sub">semantic cache savings</div>
+        </article>
+        <article class="metric">
+          <span>Tokens Saved</span>
+          <strong>{{ data.totals.tokens_saved or 0 }}</strong>
+          <div class="sub">compression + cache</div>
+        </article>
+        <article class="metric">
+          <span>PII Redacted</span>
+          <strong>{{ data.totals.pii_redactions or 0 }}</strong>
+          <div class="sub">Aadhaar / PAN / phone / email masked pre-provider</div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <h2>What this project does</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><td class="mono">Unified LLM gateway</td><td>OpenAI-compatible <span class="badge">/v1/chat/completions</span>, SSE streaming, semantic cache, prompt compression, model routing</td></tr>
+              <tr><td class="mono">MCP gateway</td><td>Register MCP servers once, invoke tools via <span class="badge">/v1/mcp/invoke</span> with auth, rate limits, health checks &amp; cost attribution</td></tr>
+              <tr><td class="mono">Cost intelligence</td><td>Per-run traces in &#8377;(INR): LLM tokens, tool calls, retries, cache &amp; compression savings</td></tr>
+              <tr><td class="mono">Budget enforcement</td><td>Per-agent monthly budgets, alert thresholds, auto-downgrade, optional HTTP 402 hard limit</td></tr>
+              <tr><td class="mono">Guardrails</td><td>PII redaction before prompts leave the network, JSON Schema structured output</td></tr>
+              <tr><td class="mono">Indic routing</td><td>Auto-detects Hindi / Tamil / Telugu / Marathi, routes to Sarvam-1</td></tr>
+              <tr><td class="mono">Observability</td><td>OpenTelemetry spans, Python SDK, live agent-run traces</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Try it in 30 seconds</h2>
+        <div style="padding:20px;">
+          <p style="margin:0 0 12px;color:var(--muted);">1&nbsp;&middot;&nbsp;Issue a virtual key (admin-only) and copy the returned <span class="mono">sk&hellip;</span> value:</p>
+          <div class="code">curl -X POST {{ request.base_url }}v1/admin/keys \
+  -H "Authorization: Bearer $ADMIN_API_KEY" -H "Content-Type: application/json" \
+  -d '{"name":"my-agent"}'</div>
+          <p style="margin:16px 0 12px;color:var(--muted);">2&nbsp;&middot;&nbsp;Chat through the gateway (it prices, traces, caches &amp; guards every call):</p>
+          <div class="code">curl -X POST {{ request.base_url }}v1/chat/completions \
+  -H "Authorization: Bearer sk-..." -H "Content-Type: application/json" \
+  -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Explain what this gateway does in one line"}]}'</div>
+          <p style="margin:16px 0 12px;color:var(--muted);">3&nbsp;&middot;&nbsp;Invoke an MCP tool through the gateway:</p>
+          <div class="code">curl -X POST {{ request.base_url }}v1/mcp/invoke \
+  -H "Authorization: Bearer sk-..." -H "Content-Type: application/json" \
+  -d '{"server":"local_tools","tool":"echo","arguments":{"text":"hello"}}'</div>
+          <p style="margin:16px 0 0;color:var(--muted);">4&nbsp;&middot;&nbsp;Watch the calls land in the dashboard:</p>
+          <div class="code">open {{ request.base_url }}dashboard</div>
+        </div>
+      </section>
+
+      <footer>AgentMesh &mdash; every agent run, every tool call, every rupee.</footer>
+    </main>
+  </body>
+</html>

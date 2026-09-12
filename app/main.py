@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.dependencies import container
-from app.routers import admin, agents, chat, mcp, runs
+from app.routers import admin, agents, chat, demo, mcp, runs
 from app.telemetry import setup_telemetry
 
 app = FastAPI(title=container.settings.app_name)
@@ -18,12 +18,21 @@ app.include_router(mcp.router)
 app.include_router(agents.router)
 app.include_router(admin.router)
 app.include_router(runs.router)
+app.include_router(demo.router)
 
 
 @app.on_event("startup")
 async def startup() -> None:
     await container.startup()
     setup_telemetry(app, container.settings)
+    if container.settings.seed_demo_data:
+        try:
+            from app.demo import seed_demo_data
+
+            if (await container.db.summary())["total_requests"] == 0:
+                await seed_demo_data(container)
+        except Exception as exc:  # never let seeding take the app down
+            print(f"[demo] seed failed, continuing: {exc}")
 
 
 @app.on_event("shutdown")
@@ -119,6 +128,11 @@ async def keys_page(request: Request) -> HTMLResponse:
     )
 
 
-@app.get("/")
-async def root() -> dict[str, str]:
-    return {"service": container.settings.app_name, "docs": "/docs", "dashboard": "/dashboard"}
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request) -> HTMLResponse:
+    data = await container.db.summary()
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={"data": data},
+    )

@@ -30,8 +30,14 @@ services:
         value: openai
       - key: DEFAULT_MODEL
         value: gpt-4o-mini
+      # Demo build: recruiters can try the API and click "Load demo data"
+      # without credentials. Flip ALLOW_NO_AUTH back to "false" for a secure install.
       - key: ALLOW_NO_AUTH
-        value: "false"
+        value: "true"
+      - key: SEED_DEMO_DATA
+        value: "true"
+      - key: DEMO_MODE
+        value: "true"
       - key: DB_POOL_MIN_SIZE
         value: "1"
       - key: DB_POOL_MAX_SIZE

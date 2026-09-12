@@ -387,6 +387,40 @@ a.nav:hover {
   text-align: center;
 }
 
+.demo-empty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+button.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 229, 153, 0.4);
+  background: rgba(0, 229, 153, 0.08);
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+button.action:hover {
+  background: rgba(0, 229, 153, 0.18);
+}
+
+button.action:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 footer {
   color: var(--muted);
   font-size: 12px;

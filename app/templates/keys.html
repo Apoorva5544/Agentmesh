@@ -25,7 +25,7 @@
 
 <section class="panel">
   <h2>Issue a Key</h2>
-  <div class="code">curl -X POST http://localhost:8000/v1/admin/keys \
+  <div class="code">curl -X POST {{ request.base_url }}v1/admin/keys \
   -H "Authorization: Bearer {{ 'ADMIN_API_KEY' if not keys else 'sk-admin...' }}" -H "Content-Type: application/json" \
   -d '{"name":"my-agent"}'</div>
   <p class="muted">The full plaintext key is shown only once at creation. Store the SHA-256 hash only.</p>

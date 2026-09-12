@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     admin_api_key: str | None = None
     allow_no_auth: bool = True
 
+    seed_demo_data: bool = False
+    demo_mode: bool = False
+
     otel_enabled: bool = False
     otel_endpoint: str = "http://localhost:4318/v1/traces"
 
