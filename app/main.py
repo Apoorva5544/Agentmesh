@@ -1,3 +1,4 @@
+import json
 import uuid
 
 from fastapi import FastAPI, Request
@@ -6,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.dependencies import container
-from app.routers import admin, agents, chat, demo, mcp, runs
+from app.routers import admin, agents, chat, demo, mcp, runs, sandbox
 from app.telemetry import setup_telemetry
 
 app = FastAPI(title=container.settings.app_name)
@@ -19,6 +20,7 @@ app.include_router(agents.router)
 app.include_router(admin.router)
 app.include_router(runs.router)
 app.include_router(demo.router)
+app.include_router(sandbox.router)
 
 
 @app.on_event("startup")
@@ -125,6 +127,17 @@ async def keys_page(request: Request) -> HTMLResponse:
         request=request,
         name="keys.html",
         context={"keys": [dict(k) for k in keys], "active": "keys"},
+    )
+
+
+@app.get("/sandbox", response_class=HTMLResponse)
+async def sandbox_page(request: Request) -> HTMLResponse:
+    from app.routers.sandbox import SAVED_PROMPTS
+
+    return templates.TemplateResponse(
+        request=request,
+        name="sandbox.html",
+        context={"recipes": SAVED_PROMPTS, "recipes_json": json.dumps(SAVED_PROMPTS), "active": "sandbox"},
     )
 
 

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block heading %}Gateway Console{% endblock %}
+{% block content %}
+
+<div class="sandbox">
+  <aside class="panel sb-saved">
+    <h2>Saved prompts</h2>
+    <p class="muted" style="padding:0 20px;">Pick one, tweak it, hit Run. Every call goes through the real gateway pipeline and is traced into the dashboard under the &ldquo;Recent Runs&rdquo; and &ldquo;Spend by Agent&rdquo; panels.</p>
+    {% for r in recipes %}
+    <button type="button" class="recipe" onclick="selectRecipe({{ loop.index0 }})">
+      <span class="recipe-name">{{ r.name }}</span>
+      <span class="recipe-meta">{{ r.endpoint }} &middot; {{ r.tag }}</span>
+    </button>
+    {% endfor %}
+  </aside>
+
+  <section class="panel sb-console">
+    <div class="sb-request">
+      <span class="method" id="sb-method">POST</span>
+      <span class="mono path" id="sb-path">&nbsp;</span>
+      <span class="badge" id="sb-tag">zero-infra</span>
+    </div>
+    <div class="sb-field">
+      <label for="sb-agent">Agent &mdash; every call is tracked to this id</label>
+      <input id="sb-agent" class="mono" value="support_bot" spellcheck="false" />
+    </div>
+    <div class="sb-field">
+      <label for="sb-body">Request body &mdash; editable, sent as JSON</label>
+      <textarea id="sb-body" class="mono" rows="8" spellcheck="false"></textarea>
+    </div>
+    <div style="display:flex;gap:12px;padding:12px 20px 20px;border-top:1px solid var(--border);">
+      <button type="button" class="action" id="sb-run" onclick="runSandbox()">Run &#9656;</button>
+      <button type="button" class="btn-ghost" onclick="clearOutput()">Clear</button>
+    </div>
+  </section>
+</div>
+
+<section class="panel">
+  <h2>Console output</h2>
+  <div class="term" id="sb-out"></div>
+</section>
+
+<script>
+const RECIPES = {{ recipes_json | safe }};
+const BASE = window.location.origin;
+let CURRENT = RECIPES[0];
+
+const KIND_PATH = {
+  mcp: "v1/mcp/invoke",
+  chat: "v1/chat/completions",
+  agent: "v1/agents/{agent}/run",
+  issue_key: "v1/admin/keys"
+};
+
+function pathFor(r) {
+  const p = KIND_PATH[r.kind];
+  return p.replace("{agent}", encodeURIComponent(r.agent_id || "support_bot"));
+}
+
+function printl(text, cls) {
+  const out = document.getElementById("sb-out");
+  const line = document.createElement("div");
+  line.className = "term-line " + (cls || "");
+  line.textContent = text;
+  out.appendChild(line);
+  out.scrollTop = out.scrollHeight;
+}
+
+function printHtml(html) {
+  const out = document.getElementById("sb-out");
+  const line = document.createElement("div");
+  line.className = "term-line";
+  line.innerHTML = html;
+  out.appendChild(line);
+  out.scrollTop = out.scrollHeight;
+}
+
+function selectRecipe(i) {
+  const r = RECIPES[i];
+  CURRENT = r;
+  document.getElementById("sb-method").textContent = "POST";
+  document.getElementById("sb-path").textContent = BASE + "/" + pathFor(r);
+  const tag = document.getElementById("sb-tag");
+  tag.textContent = r.tag;
+  tag.className = "badge tag-" + (r.tag === "admin" ? "red" : r.tag === "zero-infra" ? "green" : "purple");
+  document.getElementById("sb-agent").value = r.agent_id || "support_bot";
+  document.getElementById("sb-body").value = JSON.stringify(r.body, null, 2);
+  clearOutput();
+  printl("$ POST " + pathFor(r) + "   # " + r.description, "dim");
+}
+
+async function runSandbox() {
+  const btn = document.getElementById("sb-run");
+  const agent = document.getElementById("sb-agent").value.trim() || "support_bot";
+  let body;
+  try {
+    body = JSON.parse(document.getElementById("sb-body").value);
+  } catch (e) {
+    printl("! invalid JSON in request body: " + e.message, "error");
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = "Running\u2026";
+  let auth = "";
+  if (CURRENT.kind === "issue_key") auth = ' -H "Authorization: Bearer $ADMIN_API_KEY"';
+  printl("$ curl -X POST " + BASE + "/" + pathFor(CURRENT) + auth);
+  printl("> " + JSON.stringify(body), "dim");
+  try {
+    const res = await fetch(BASE + "/sandbox/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kind: CURRENT.kind, agent_id: agent, body: body })
+    });
+    const data = await res.json();
+    if (res.ok && data.ok) {
+      printl("\u2713 HTTP " + data.status + " OK", "ok");
+      if (data.run_id) {
+        printHtml('view trace \u2192 <a class="term-link" href="' + BASE + '/dashboard/runs/' + data.run_id + '" target="_blank">/dashboard/runs/' + data.run_id + '</a>');
+      }
+      if (data.result) {
+        const pretty = (typeof data.result === "string") ? data.result : JSON.stringify(data.result, null, 2);
+        printl(pretty, "val");
+      }
+    } else {
+      const detail = data.detail ? (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail)) : (data.error || "");
+      printl("\u2717 HTTP " + res.status + (detail ? " \u2014 " + detail : " failed"), "error");
+      if (data.result && !data.result.ok) printl(JSON.stringify(data.result, null, 2), "val");
+    }
+  } catch (err) {
+    printl("! network error: " + err, "error");
+  }
+  btn.disabled = false;
+  btn.textContent = "Run \u25b8";
+}
+
+function clearOutput() {
+  document.getElementById("sb-out").innerHTML = "";
+  printl("$ Gateway console ready \u2014 pick a saved prompt and hit Run. Calls are authenticated, rate-limited and attributed to the agent.", "dim");
+}
+
+window.addEventListener("load", function () { selectRecipe(0); });
+</script>
+
+{% endblock %}

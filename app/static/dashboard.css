@@ -421,6 +421,190 @@ button.action:disabled {
   cursor: default;
 }
 
+/* -------------------------------------------------------------- sandbox */
+.sandbox {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 960px) {
+  .sandbox {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sb-saved .recipe {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 20px;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  font: inherit;
+  transition: background 0.15s;
+}
+
+.sb-saved .recipe:hover {
+  background: var(--panel-hover);
+}
+
+.sb-saved .recipe-name {
+  display: block;
+  color: var(--text-heading);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sb-saved .recipe-meta {
+  display: block;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.sb-console {
+  display: flex;
+  flex-direction: column;
+}
+
+.sb-request {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sb-request .method {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green);
+  border: 1px solid rgba(0, 229, 153, 0.4);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.sb-request .path {
+  color: var(--text-heading);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.badge.tag-green {
+  color: var(--green);
+  border-color: rgba(0, 229, 153, 0.3);
+}
+
+.badge.tag-purple {
+  color: var(--purple);
+  border-color: rgba(178, 102, 255, 0.3);
+}
+
+.badge.tag-red {
+  color: var(--red);
+  border-color: rgba(255, 74, 74, 0.3);
+}
+
+.sb-field {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sb-field label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.sb-field input,
+.sb-field textarea {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-heading);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 8px 12px;
+  line-height: 1.5;
+}
+
+.sb-field input:focus,
+.sb-field textarea:focus {
+  outline: none;
+  border-color: var(--green);
+}
+
+.sb-field textarea {
+  resize: vertical;
+  min-height: 120px;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.btn-ghost {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-ghost:hover {
+  color: var(--text-heading);
+  border-color: var(--border-hover);
+}
+
+.term {
+  background: #050505;
+  padding: 16px 20px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+.term-line {
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text);
+  margin: 0 0 6px 0;
+}
+
+.term-line.dim {
+  color: var(--muted);
+}
+
+.term-line.ok {
+  color: var(--green);
+}
+
+.term-line.error {
+  color: var(--red);
+}
+
+.term-line.val {
+  color: var(--text-heading);
+}
+
+.term-line a.term-link {
+  color: var(--green);
+  text-decoration: none;
+}
+
 footer {
   color: var(--muted);
   font-size: 12px;
