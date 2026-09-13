@@ -1,150 +1,518 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AgentMesh — AI Agent Control Plane</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='dashboard.css') }}">
-  </head>
-  <body>
-    <main class="shell">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">AgentMesh &middot; AI Agent Control Plane</p>
-          <h1>LLM Gateway + MCP orchestration + real-time cost intelligence</h1>
-        </div>
-        <nav style="display:flex;gap:20px;">
-          <a href="/dashboard" class="docs-link">Live Dashboard</a>
-          <a href="/docs" class="docs-link">API Docs</a>
-        </nav>
-      </header>
+<!DOCTYPE html>
 
-      <nav class="tabs">
-        <a href="/" class="active">Home</a>
-        <a href="/dashboard">Overview</a>
-        <a href="/dashboard/agents">Agents &amp; Budgets</a>
-        <a href="/dashboard/mcp">MCP Gateway</a>
-        <a href="/sandbox">Try it</a>
-        <a href="/dashboard/budgets">Alerts</a>
-        <a href="/dashboard/keys">API Keys</a>
-      </nav>
-
-      <section class="hero">
-        <p class="eyebrow hero-eyebrow">The infrastructure layer for production AI agents</p>
-        <h2 class="hero-title">One gateway. Every model. Every rupee tracked.</h2>
-        <p class="hero-sub">
-          Every LLM call <em>and</em> MCP tool call your agents make passes through one gateway.
-          AgentMesh authenticates it, caches it, compresses it, guards it, routes it, prices it in
-          INR, and traces it to a live dashboard &mdash; so you always know exactly where every rupee goes.
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>AgentMesh — AI Agent Control Plane</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-background":"#0f172a","secondary-container":"#e0f2fe","on-surface-variant":"#64748b","surface-container-highest":"#e2e8f0","surface":"#ffffff","surface-variant":"#f1f5f9","inverse-surface":"#0f172a","error-container":"#fee2e2","secondary-fixed-dim":"#0284c7","outline-variant":"#cbd5e1","background":"#f8fafc","on-tertiary-fixed-variant":"#3730a3","error":"#dc2626","tertiary-fixed-dim":"#818cf8","on-surface":"#0f172a","surface-bright":"#ffffff","on-tertiary-container":"#312e81","primary-fixed-dim":"#059669","surface-tint":"#059669","inverse-primary":"#a7f3d0","surface-container-low":"#f8fafc","primary-fixed":"#d1fae5","primary":"#059669","on-primary-container":"#064e3b","on-secondary-fixed":"#082f49","tertiary-fixed":"#e0e7ff","tertiary-container":"#e0e7ff","on-primary":"#ffffff","on-tertiary":"#ffffff","on-secondary-fixed-variant":"#0369a1","on-secondary":"#ffffff","secondary-fixed":"#bae6fd","surface-dim":"#f1f5f9","primary-container":"#d1fae5","on-primary-fixed":"#064e3b","secondary":"#0284c7","on-tertiary-fixed":"#1e1b4b","surface-container-lowest":"#ffffff","surface-container":"#ffffff","outline":"#94a3b8","on-error":"#ffffff","on-secondary-container":"#075985","inverse-on-surface":"#f8fafc","on-error-container":"#7f1d1d","surface-container-high":"#f1f5f9","tertiary":"#4f46e5","on-primary-fixed-variant":"#047857"},borderRadius:{"DEFAULT":"0.375rem","lg":"0.5rem","xl":"0.75rem","2xl":"1rem","full":"9999px"},spacing:{"space-sm":"0.75rem","space-md":"1rem","space-2xl":"4rem","space-3xl":"6rem","space-2xs":"0.25rem","gutter":"1.5rem","space-xl":"2.5rem","margin-mobile":"1rem","space-lg":"1.5rem","space-xs":"0.5rem","margin":"2rem"},fontFamily:{"display-hero":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"label-badge":["Inter"],"display-hero-mobile":["Plus Jakarta Sans"],"headline-xl":["Plus Jakarta Sans"],"label-code":["JetBrains Mono"],"body-lg":["Inter"],"body-sm":["Inter"],"label-mono-xs":["JetBrains Mono"],"body-md":["Inter"],"headline-md":["Plus Jakarta Sans"]},fontSize:{"display-hero":["56px",{"lineHeight":"64px","letterSpacing":"-0.03em","fontWeight":"700"}],"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-badge":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"display-hero-mobile":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-xl":["40px",{"lineHeight":"48px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-code":["13px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"500"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"400"}],"body-sm":["13px",{"lineHeight":"20px","fontWeight":"400"}],"label-mono-xs":["11px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"500"}],"body-md":["15px",{"lineHeight":"24px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-emerald-100 selection:text-emerald-900"><header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm"><div class="h-20 max-w-[1280px] mx-auto px-margin flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md shrink-0"><a class="flex items-center gap-space-xs group" data-path="home" href="/"><div class="w-9 h-9 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors"><span class="material-symbols-outlined text-[22px]">hub</span></div><span class="font-headline-md text-headline-md tracking-tight text-slate-900">Agent<span class="text-emerald-600">Mesh</span></span></a><span class="hidden xl:inline-flex items-center px-space-xs py-space-2xs rounded-full bg-slate-100 border border-slate-200 font-label-mono-xs text-label-mono-xs text-slate-600 uppercase tracking-wider">Enterprise AI Control Plane</span></div><nav class="hidden lg:flex items-center gap-space-md xl:gap-space-lg" data-active-classes="text-emerald-600 font-semibold"><a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 transition-colors" data-path="features" href="#features">Features</a><a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 transition-colors" data-path="how-it-works" href="#how-it-works">How It Works</a><a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 transition-colors" data-path="mcp-gateway" href="#mcp-gateway">MCP Gateway</a><a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 transition-colors" data-path="cost-intelligence" href="#cost-intelligence">Cost Intelligence</a><a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 transition-colors" data-path="benchmarks" href="#features">Benchmarks</a><a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 transition-colors" data-path="documentation" href="/docs">Documentation</a></nav><div class="flex items-center gap-space-sm sm:gap-space-md shrink-0"><a class="hidden sm:flex items-center gap-space-xs font-label-code text-label-code text-slate-700 hover:text-slate-900 px-space-xs py-space-2xs rounded-md hover:bg-slate-100 transition-colors" data-path="live-dashboard" href="/dashboard"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span></span><span>Live Dashboard</span></a><a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 px-space-xs py-space-2xs transition-colors" data-path="sign-in" href="/dashboard/keys">Sign In</a><a class="inline-flex items-center justify-center gap-space-2xs px-space-md py-space-xs rounded-lg bg-emerald-600 text-white font-headline-md text-body-sm hover:bg-emerald-700 transition-all shadow-sm" data-path="gateway-console" href="/sandbox"><span class="font-medium">Try Gateway Console</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span></a><div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700"><span class="material-symbols-outlined text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background min-h-[calc(100vh-80px)]"><div class="flex flex-col w-full text-on-surface">
+<!-- Ambient Backdrop Glow (Relative strictly constrained) -->
+<div class="relative w-full overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-100/60 border-b border-slate-200">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[460px] bg-gradient-to-b from-emerald-100/50 via-sky-50/40 to-transparent blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-80 right-10 w-96 h-96 bg-emerald-100/40 blur-[120px] pointer-events-none -z-10"></div>
+<!-- =====================================================================
+         1. HERO SECTION (Stripe-grade Precision & Zoho Architectural Clarity)
+         ===================================================================== -->
+<section class="max-w-[1280px] mx-auto px-margin pt-space-2xl pb-space-3xl">
+<!-- Announcement Pill Badge -->
+<div class="flex items-center justify-start mb-space-lg">
+<div class="inline-flex items-center gap-space-xs px-space-md py-space-2xs rounded-full bg-white border border-slate-200 text-slate-700 shadow-sm">
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+</span>
+<span class="font-label-badge text-label-badge text-emerald-700 uppercase tracking-wider font-semibold">Production Gateway v2.4</span>
+<span class="text-slate-300">/</span>
+<span class="font-body-sm text-body-sm text-slate-600">Built for Indian AI Enterprise &amp; Sovereign Global Stacks</span>
+</div>
+</div>
+<!-- Main Headline & Subtitle -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<div class="lg:col-span-8 space-y-space-md">
+<h1 class="font-display-hero text-display-hero text-slate-900 tracking-tight">
+            One gateway. <br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600">Every model.</span> <br/>
+            Every rupee tracked.
+          </h1>
+<p class="font-body-lg text-body-lg text-slate-600 max-w-2xl leading-relaxed pt-space-xs">
+            The sovereign control plane for enterprise AI agents. Authenticate virtual keys, eliminate redundancy with 3-tier caching, sanitize PII, auto-route Indic dialects to Sarvam-1, and monitor real-time token burn in <span class="text-emerald-700 font-medium">₹ INR telemetry</span>.
+          </p>
+<!-- Primary CTA Button Row -->
+<div class="pt-space-md flex flex-wrap items-center gap-space-md">
+<a class="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-emerald-600 text-white font-headline-md text-body-md hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/20" href="/sandbox">
+<span class="font-semibold">Try the Gateway Console</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<a class="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-white border border-slate-200 text-slate-800 font-headline-md text-body-md hover:bg-slate-50 transition-all shadow-sm" href="/dashboard">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+</span>
+<span>Open Live Dashboard</span>
+</a>
+<div class="flex items-center gap-space-xs pl-space-xs">
+<a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 px-space-xs py-space-2xs transition-colors underline decoration-slate-300 underline-offset-4" href="/dashboard/keys">
+                Issue an API Key
+              </a>
+<span class="text-slate-300">•</span>
+<a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 px-space-xs py-space-2xs transition-colors underline decoration-slate-300 underline-offset-4" href="/docs">
+                Explore API Docs
+              </a>
+</div>
+</div>
+</div>
+<!-- Metric Command Pod (Hero Right Rail) -->
+<div class="lg:col-span-4 bg-white border border-slate-200 p-space-lg rounded-xl shadow-md space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">Gateway Telemetry</span>
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-700 px-space-xs py-0.5 rounded bg-emerald-50 border border-emerald-200/60 font-semibold">p99 &lt; 11.4ms</span>
+</div>
+<div class="p-space-md rounded-lg bg-slate-50 border border-slate-100">
+<div class="flex items-baseline justify-between">
+<span class="font-body-sm text-body-sm text-slate-600">INR Cost Optimized (Today)</span>
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-600 font-bold bg-emerald-100/70 px-1.5 py-0.5 rounded">-38.4%</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-slate-900 font-bold mt-space-2xs">₹4,82,190</div>
+<div class="font-label-mono-xs text-label-mono-xs text-slate-500 mt-space-2xs">Saved via Semantic Cache &amp; Context Compression</div>
+</div>
+<!-- Micro Sparkline Telemetry Indicator -->
+<div class="space-y-space-2xs pt-space-xs">
+<div class="flex items-center justify-between font-label-mono-xs text-label-mono-xs text-slate-500 font-medium">
+<span>ACTIVE AGENT ROUTING</span>
+<span class="text-slate-900 font-semibold">3,418 req/sec</span>
+</div>
+<!-- Inline Mini Bar Visualization -->
+<div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex border border-slate-200/60">
+<div class="bg-emerald-500 h-full w-[42%]" title="Sarvam Indic Models"></div>
+<div class="bg-sky-500 h-full w-[31%]" title="Claude 3.5 Sonnet"></div>
+<div class="bg-indigo-500 h-full w-[19%]" title="OpenAI GPT-4o"></div>
+<div class="bg-slate-300 h-full w-[8%]" title="Self-hosted Llama-3"></div>
+</div>
+<div class="flex justify-between font-label-mono-xs text-label-mono-xs text-slate-500 pt-1">
+<span>Sarvam-1 (42%)</span>
+<span>Claude (31%)</span>
+<span>GPT-4o (19%)</span>
+<span>Local (8%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Trust Bar / Supported Model Families -->
+<div class="mt-space-2xl pt-space-lg border-t border-slate-200/70">
+<p class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-widest text-center lg:text-left mb-space-md font-semibold">
+          Orchestrating 50M+ production tokens daily across sovereign architectures
         </p>
-        <div class="hero-actions">
-          <a class="badge green" href="/sandbox">Try the Gateway Console &rarr;</a>
-          <a class="badge" href="/dashboard">Open Live Dashboard</a>
-          <a class="badge" href="/dashboard/keys">Issue an API Key</a>
-          <a class="badge" href="/docs">Explore API Docs</a>
-        </div>
-      </section>
-
-      <section class="panel how-it-works">
-        <h2>How it works</h2>
-        <p class="muted how-lead">A request to <span class="mono">/v1/chat/completions</span> (or <span class="mono">/v1/messages</span>) flows through the control plane in order:</p>
-        <ol class="steps">
-          <li>
-            <span class="step-label">Authenticate</span>
-            <p>Your virtual key (issued in the <a class="nav" href="/dashboard/keys">API Keys</a> tab) is verified. Every tenant is rate-limited per key via Redis.</p>
-          </li>
-          <li>
-            <span class="step-label">Cache lookup</span>
-            <p>Three tiers &mdash; exact match, then semantic similarity (embeddings), then a short-lived provider KV cache. Cache hits skip the providers entirely.</p>
-          </li>
-          <li>
-            <span class="step-label">Compress</span>
-            <p>Long prompts are losslessly compressed to a token budget, cutting cost before the request even leaves the network.</p>
-          </li>
-          <li>
-            <span class="step-label">Guardrails</span>
-            <p>PII (Aadhaar, PAN, phone, email, cards) is redacted pre-provider; JSON Schema output is enforced on the way back.</p>
-          </li>
-          <li>
-            <span class="step-label">Route</span>
-            <p>Language-aware routing sends Hindi / Tamil / Telugu / Marathi to Sarvam-1. Complexity routing picks the right model for the job, with an automatic fallback chain.</p>
-          </li>
-          <li>
-            <span class="step-label">Budget check</span>
-            <p>CostGuard compares the agent's monthly budget. At thresholds it alerts, auto-downgrades to a cheaper model, or hard-blocks with HTTP 402.</p>
-          </li>
-          <li>
-            <span class="step-label">Trace &amp; bill</span>
-            <p>Every step &mdash; LLM call, MCP tool call, retry, cache hit &mdash; is priced in INR and recorded as an OpenTelemetry span and usage event.</p>
-          </li>
-        </ol>
-      </section>
-
-      <section class="grid-2">
-        <section class="panel">
-          <h2>What it gives you</h2>
-          <ul class="feature-list muted">
-            <li><span class="mono">Unified LLM gateway</span> &mdash; OpenAI- and Anthropic-compatible endpoints for Cursor, Claude Desktop, OpenCode, or your own agents.</li>
-            <li><span class="mono">MCP gateway</span> &mdash; register MCP servers once (<span class="mono">/v1/mcp/registry</span>), invoke tools with auth, rate limits and health checks.</li>
-            <li><span class="mono">Cost intelligence</span> &mdash; per-run traces in INR: tokens, tool calls, retries, and cache/compression savings.</li>
-            <li><span class="mono">Budget enforcement</span> &mdash; per-agent monthly caps, alert thresholds, auto-downgrade and optional hard limits.</li>
-            <li><span class="mono">Guardrails</span> &mdash; PII redaction and JSON Schema structured output at the gateway layer.</li>
-            <li><span class="mono">Observability</span> &mdash; OpenTelemetry spans, a Python SDK, and a live trace view for every agent run.</li>
-          </ul>
-        </section>
-
-        <section class="panel">
-          <h2>Providers</h2>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Provider</th><th>Languages</th><th>Cost / 1M tokens</th><th>Use case</th></tr></thead>
-              <tbody>
-                <tr><td class="mono">Ollama</td><td>All</td><td>&#8377;0 (local)</td><td>Dev, privacy, offline</td></tr>
-                <tr><td class="mono">Sarvam-1</td><td>Hindi, Tamil, Telugu, Marathi</td><td>&#8377;150</td><td>Indic queries</td></tr>
-                <tr><td class="mono">OpenAI</td><td>All</td><td>&#8377;2,000</td><td>General reasoning</td></tr>
-                <tr><td class="mono">Anthropic</td><td>All</td><td>&#8377;2,200</td><td>Long context, analysis</td></tr>
-              </tbody>
-            </table>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-space-sm items-center">
+<div class="p-space-sm rounded-lg bg-white border border-slate-200 text-center font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
+            Sarvam AI
           </div>
-        </section>
-      </section>
-
-      <section class="panel">
-        <h2>Try it in 30 seconds</h2>
-        <div style="padding:20px;">
-          <p style="margin:0 0 12px;color:var(--muted);">1&nbsp;&middot;&nbsp;Issue a virtual key from the <a class="nav" href="/dashboard/keys">API Keys</a> page (admin-only) and copy the returned <span class="mono">sk&hellip;</span> value:</p>
-          <div class="code">curl -X POST {{ request.base_url }}v1/admin/keys \
-  -H "Authorization: Bearer $ADMIN_API_KEY" -H "Content-Type: application/json" \
-  -d '{"name":"my-agent"}'</div>
-          <p style="margin:16px 0 12px;color:var(--muted);">2&nbsp;&middot;&nbsp;Chat through the gateway (it prices, traces, caches &amp; guards every call):</p>
-          <div class="code">curl -X POST {{ request.base_url }}v1/chat/completions \
-  -H "Authorization: Bearer sk-..." -H "Content-Type: application/json" \
-  -d '{"model":"auto","messages":[{"role":"user","content":"Explain what this gateway does in one line"}]}'</div>
-          <p style="margin:16px 0 12px;color:var(--muted);">3&nbsp;&middot;&nbsp;Invoke an MCP tool through the gateway:</p>
-          <div class="code">curl -X POST {{ request.base_url }}v1/mcp/invoke \
-  -H "Authorization: Bearer sk-..." -H "Content-Type: application/json" \
-  -d '{"server":"local_tools","tool":"echo","arguments":{"text":"hello"}}'</div>
-          <p style="margin:16px 0 0;color:var(--muted);">4&nbsp;&middot;&nbsp;Watch the calls land in the <a class="nav" href="/dashboard">dashboard</a>:</p>
-          <div class="code">open {{ request.base_url }}dashboard</div>
-        </div>
-      </section>
-
-      <section>
-        <div class="fin-cta">
-          <div>
-            <strong style="color:var(--text-heading);font-size:14px;">Ready to look around?</strong>
-            <p class="muted" style="margin:4px 0 0;">See live costs and traces, manage agents and budgets, configure MCP servers, or issue your first key.</p>
+<div class="p-space-sm rounded-lg bg-white border border-slate-200 text-center font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
+            Anthropic
           </div>
-          <div class="hero-actions">
-            <a class="badge green" href="/dashboard">Live Dashboard</a>
-            <a class="badge" href="/dashboard/agents">Agents &amp; Budgets</a>
-            <a class="badge" href="/dashboard/mcp">MCP Gateway</a>
-            <a class="badge" href="/dashboard/keys">API Keys</a>
+<div class="p-space-sm rounded-lg bg-white border border-slate-200 text-center font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
+            OpenAI
           </div>
-        </div>
-      </section>
+<div class="p-space-sm rounded-lg bg-white border border-slate-200 text-center font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
+            DeepSeek-V3
+          </div>
+<div class="p-space-sm rounded-lg bg-white border border-slate-200 text-center font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
+            vLLM Host
+          </div>
+<div class="p-space-sm rounded-lg bg-white border border-slate-200 text-center font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
+            Ollama Node
+          </div>
+</div>
+</div>
+</section>
+</div>
+<!-- =====================================================================
+       2. REPLACING THE CRAMPED 7-ITEM LIST: INTERACTIVE PIPELINE FLOW
+       ===================================================================== -->
+<section id="how-it-works" class="w-full bg-white py-space-3xl border-b border-slate-200">
+<div class="max-w-[1280px] mx-auto px-margin">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl gap-space-md">
+<div class="space-y-space-xs max-w-2xl">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-label-mono-xs text-label-mono-xs uppercase tracking-wider font-semibold">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+            Control Plane Lifecycle
+          </div>
+<h2 class="font-headline-xl text-headline-xl text-slate-900">Production Request Pipeline</h2>
+<p class="font-body-md text-body-md text-slate-600">
+            How every <span class="font-label-code text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">/v1/chat/completions</span> and <span class="font-label-code text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">/v1/messages</span> invocation passes through AgentMesh in sub-12 milliseconds.
+          </p>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">SLA Target:</span>
+<span class="px-space-xs py-space-2xs rounded bg-emerald-100 text-emerald-800 font-label-code text-label-code font-bold border border-emerald-200">99.992% Uptime</span>
+</div>
+</div>
+<!-- The 7-Step Architectural Pipeline Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Stage 1 -->
+<div class="p-space-lg rounded-xl bg-slate-50/70 border border-slate-200 hover:bg-white hover:border-emerald-300 hover:shadow-md transition-all group flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-700 font-semibold px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200/60">STAGE 01</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-emerald-600 transition-colors">vpn_key</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">Virtual Authenticate</h3>
+<p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
+              Virtual agent keys validated in sub-millisecond Redis distributed clusters. Tenant rate-limiting enforces strict token allowances.
+            </p>
+</div>
+<div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-emerald-700 flex items-center justify-between shadow-xs">
+<span class="text-slate-500">Latency</span>
+<span class="font-bold text-slate-900">0.8 ms</span>
+</div>
+</div>
+<!-- Stage 2 -->
+<div class="p-space-lg rounded-xl bg-slate-50/70 border border-slate-200 hover:bg-white hover:border-emerald-300 hover:shadow-md transition-all group flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-700 font-semibold px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200/60">STAGE 02</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-emerald-600 transition-colors">database</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">3-Tier Cache Lookup</h3>
+<p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
+              Exact MD5 hash, semantic Qdrant vector similarity (&gt;0.96 cosine), and transient KV store. Cache hits bypass upstream LLM bills.
+            </p>
+</div>
+<div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-sky-700 flex items-center justify-between shadow-xs">
+<span class="text-slate-500">Hit Yield</span>
+<span class="font-bold text-slate-900">42.8% Saved</span>
+</div>
+</div>
+<!-- Stage 3 -->
+<div class="p-space-lg rounded-xl bg-slate-50/70 border border-slate-200 hover:bg-white hover:border-emerald-300 hover:shadow-md transition-all group flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-700 font-semibold px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200/60">STAGE 03</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-emerald-600 transition-colors">compress</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">Lossless Compress</h3>
+<p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
+              Dynamic prompt token optimization. Trims repetitive system headers and whitespace losslessly before network transit.
+            </p>
+</div>
+<div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-emerald-700 flex items-center justify-between shadow-xs">
+<span class="text-slate-500">Reduction</span>
+<span class="font-bold text-slate-900">-34% Tokens</span>
+</div>
+</div>
+<!-- Stage 4 -->
+<div class="p-space-lg rounded-xl bg-slate-50/70 border border-slate-200 hover:bg-white hover:border-emerald-300 hover:shadow-md transition-all group flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-700 font-semibold px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200/60">STAGE 04</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-emerald-600 transition-colors">security</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">Active Guardrails</h3>
+<p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
+              Pre-provider PII scrub: Aadhaar, PAN card, phone numbers, and PCI-DSS data redacted. Deterministic JSON schema verification on exit.
+            </p>
+</div>
+<div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-slate-600 flex items-center justify-between shadow-xs">
+<span class="text-slate-500">Compliance</span>
+<span class="font-bold text-emerald-700">DPDP &amp; RBI Ready</span>
+</div>
+</div>
+<!-- Stage 5 -->
+<div class="p-space-lg rounded-xl bg-slate-50/70 border border-slate-200 hover:bg-white hover:border-emerald-300 hover:shadow-md transition-all group flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-700 font-semibold px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200/60">STAGE 05</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-emerald-600 transition-colors">route</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">Indic Multi-Route</h3>
+<p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
+              Language-detect automatically branches Hindi, Tamil, Telugu, and Marathi prompts to Sarvam-1 for native accuracy and 5x lower cost.
+            </p>
+</div>
+<div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-emerald-700 flex items-center justify-between shadow-xs">
+<span class="text-slate-500">Fallback</span>
+<span class="font-bold text-slate-900">Auto-Arbitrated</span>
+</div>
+</div>
+<!-- Stage 6 -->
+<div class="p-space-lg rounded-xl bg-slate-50/70 border border-slate-200 hover:bg-white hover:border-emerald-300 hover:shadow-md transition-all group flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-700 font-semibold px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200/60">STAGE 06</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-emerald-600 transition-colors">account_balance_wallet</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">CostGuard FinOps</h3>
+<p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
+              Agent-level monthly caps in INR. Auto-downgrades expensive models when reaching 80% quota; enforces hard HTTP 402 budget cutoff.
+            </p>
+</div>
+<div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-rose-600 flex items-center justify-between shadow-xs">
+<span class="text-slate-500">Hard Cap</span>
+<span class="font-bold text-slate-900">Zero Overspend</span>
+</div>
+</div>
+<!-- Stage 7 (Spans 2 cols on lg for visual punch) -->
+<div class="lg:col-span-2 p-space-lg rounded-xl bg-gradient-to-br from-emerald-50/60 via-slate-50 to-white border border-emerald-200 hover:shadow-md transition-all group flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-800 font-semibold px-space-xs py-space-2xs rounded bg-emerald-100/70 border border-emerald-300">STAGE 07 • THE FINAL SPAN</span>
+<span class="material-symbols-outlined text-emerald-600">insights</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">OpenTelemetry Trace &amp; INR Pricing</h3>
+<p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
+              Every invocation, retry, model token segment, and MCP tool resolution is assigned a trace ID, valued in Indian Rupees (₹), and pushed live to your monitoring dashboards and Prometheus sinks.
+            </p>
+</div>
+<div class="grid grid-cols-3 gap-space-xs pt-space-xs">
+<div class="bg-white border border-slate-200 p-space-xs rounded shadow-xs">
+<div class="font-label-mono-xs text-label-mono-xs text-slate-500">Trace Export</div>
+<div class="font-label-code text-label-code text-emerald-700 font-bold">OTel v1.28</div>
+</div>
+<div class="bg-white border border-slate-200 p-space-xs rounded shadow-xs">
+<div class="font-label-mono-xs text-label-mono-xs text-slate-500">Currency</div>
+<div class="font-label-code text-label-code text-sky-700 font-bold">INR (₹) Fixed</div>
+</div>
+<div class="bg-white border border-slate-200 p-space-xs rounded shadow-xs">
+<div class="font-label-mono-xs text-label-mono-xs text-slate-500">Audit Trail</div>
+<div class="font-label-code text-label-code text-slate-900 font-bold">Immutable</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- =====================================================================
+       3. BENTO GRID: KEY CAPABILITIES & HIGH-IMPACT TELEMETRY
+       ===================================================================== -->
+<section id="features" class="max-w-[1280px] mx-auto px-margin py-space-3xl w-full">
+<div class="text-center max-w-3xl mx-auto mb-space-2xl space-y-space-xs">
+<h2 class="font-headline-xl text-headline-xl text-slate-900">Designed for Sovereign AI Governance</h2>
+<p class="font-body-lg text-body-lg text-slate-600">
+        Complete visibility and governance over distributed multi-agent swarms.
+      </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- Bento 1: Real-time INR Cost Intelligence (7 cols) -->
+<div id="cost-intelligence" class="lg:col-span-7 bg-white border border-slate-200 rounded-xl p-space-xl flex flex-col justify-between shadow-md">
+<div class="space-y-space-sm mb-space-lg">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-label-mono-xs text-label-mono-xs font-semibold">
+<span class="material-symbols-outlined text-[16px]">currency_rupee</span>
+            FinOps Telemetry
+          </div>
+<h3 class="font-headline-lg text-headline-lg text-slate-900">Real-Time INR Cost Intelligence</h3>
+<p class="font-body-sm text-body-sm text-slate-600">
+            No more delayed monthly dollar invoices with unpredictable exchange rates. Convert model burn instantly to ₹ with agent-by-agent attribution.
+          </p>
+</div>
+<!-- Visual Mock Telemetry Dashboard -->
+<div class="p-space-md rounded-lg bg-slate-50 border border-slate-200/80 space-y-space-md">
+<div class="flex items-center justify-between border-b pb-space-xs border-slate-200">
+<span class="font-label-code text-label-code text-slate-900 font-medium">Agent Run: <span class="text-emerald-700 font-semibold">crm-enrichment-worker-09</span></span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">Trace: 8f92-ec20</span>
+</div>
+<!-- Cost Comparison Table -->
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-slate-600">Gross Model Upstream Cost</span>
+<span class="font-label-code text-label-code line-through text-slate-400">₹14.80</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-slate-600">Semantic Cache Deduction (-42%)</span>
+<span class="font-label-code text-label-code text-emerald-700 font-semibold">-₹6.21</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-slate-600">Lossless Context Compression</span>
+<span class="font-label-code text-label-code text-emerald-700 font-semibold">-₹2.14</span>
+</div>
+<div class="flex items-center justify-between text-body-md font-headline-md pt-space-xs border-t border-slate-200">
+<span class="text-slate-900 font-semibold">Net Gateway Invoiced</span>
+<span class="font-label-code text-label-code font-bold text-emerald-700 text-headline-md">₹6.45</span>
+</div>
+</div>
+<!-- Real-Time Progress Visual -->
+<div class="pt-space-xs">
+<div class="flex justify-between font-label-mono-xs text-label-mono-xs text-slate-500 mb-1">
+<span>MONTHLY BUDGET UTILIZATION</span>
+<span class="font-semibold text-slate-700">₹64,500 / ₹1,00,000 (64.5%)</span>
+</div>
+<div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+<div class="bg-emerald-600 h-full rounded-full w-[64.5%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bento 2: Universal MCP Gateway (5 cols) -->
+<div id="mcp-gateway" class="lg:col-span-5 bg-white border border-slate-200 rounded-xl p-space-xl flex flex-col justify-between shadow-md">
+<div class="space-y-space-sm mb-space-lg">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-sky-50 border border-sky-200 text-sky-700 font-label-mono-xs text-label-mono-xs font-semibold">
+<span class="material-symbols-outlined text-[16px]">terminal</span>
+            MCP Protocol
+          </div>
+<h3 class="font-headline-lg text-headline-lg text-slate-900">Universal MCP Tool Routing</h3>
+<p class="font-body-sm text-body-sm text-slate-600">
+            Connect Claude, OpenAI, and open models to standardized Model Context Protocol tool servers across your internal databases and APIs securely.
+          </p>
+</div>
+<div class="p-space-md rounded-lg bg-slate-50 border border-slate-200 space-y-space-xs font-label-code text-label-code text-body-sm">
+<div class="flex items-center gap-space-xs text-slate-700">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+<span>mcp://internal-postgres-cluster</span>
+</div>
+<div class="flex items-center gap-space-xs text-slate-700">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+<span>mcp://salesforce-sync-gateway</span>
+</div>
+<div class="flex items-center gap-space-xs text-slate-700">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+<span>mcp://github-repo-orchestrator</span>
+</div>
+<div class="flex items-center gap-space-xs text-sky-700 font-medium">
+<span class="material-symbols-outlined text-[16px] text-sky-600">shield_lock</span>
+<span>Enforced with Zero-Trust mTLS</span>
+</div>
+</div>
+</div>
+<!-- Bento 3: Sovereign Enterprise Trust & Compliance (12 cols) -->
+<div class="lg:col-span-12 bg-white border border-slate-200 rounded-xl p-space-xl shadow-md">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg items-center">
+<div class="space-y-space-xs">
+<div class="inline-flex items-center gap-space-2xs text-emerald-700 font-label-mono-xs text-label-mono-xs uppercase font-semibold">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+              Indian Data Sovereignty
+            </div>
+<h3 class="font-headline-md text-headline-md text-slate-900">DPDP Act &amp; RBI Ready</h3>
+<p class="font-body-sm text-body-sm text-slate-600">
+              Designed for regulated Indian banking, fintech, and sovereign healthcare workflows with localized edge nodes in Mumbai and Hyderabad.
+            </p>
+</div>
+<div class="p-space-md rounded-lg bg-slate-50 border border-slate-200 space-y-space-2xs">
+<div class="font-headline-md text-body-md text-slate-900 font-semibold">Zero Data Retention Option</div>
+<p class="font-body-sm text-body-sm text-slate-600">
+              Pass-through architecture. No agent prompts or completions are cached to disk without explicit tenant encryption keys.
+            </p>
+</div>
+<div class="p-space-md rounded-lg bg-slate-50 border border-slate-200 space-y-space-2xs">
+<div class="font-headline-md text-body-md text-slate-900 font-semibold">Local Edge Residency</div>
+<p class="font-body-sm text-body-sm text-slate-600">
+              Data remains in-territory. All PII sanitization algorithms execute strictly inside domestic availability zones.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- =====================================================================
+       4. DROP-IN CODE PLAYGROUND / DEVELOPER INTEGRATION
+       ===================================================================== -->
+<section class="w-full bg-white border-y border-slate-200 py-space-3xl">
+<div class="max-w-[1280px] mx-auto px-margin">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+<div class="lg:col-span-5 space-y-space-md">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-label-mono-xs text-label-mono-xs uppercase font-semibold">
+<span class="material-symbols-outlined text-[16px]">terminal</span>
+            Drop-in Replacement
+          </div>
+<h2 class="font-headline-xl text-headline-xl text-slate-900">
+            Change one URL. <br/>
+            Gain instant control.
+          </h2>
+<p class="font-body-md text-body-md text-slate-600 leading-relaxed">
+            AgentMesh is 100% wire-compatible with standard OpenAI, Anthropic, and LangChain SDKs. Swap your <code class="font-label-code text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 text-body-sm">base_url</code> to the gateway endpoint and immediately activate intelligent routing, guardrails, and telemetry.
+          </p>
+<div class="space-y-space-sm pt-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-label-mono-xs text-label-mono-xs font-bold">1</span>
+<span class="font-body-sm text-body-sm text-slate-800">Zero agent refactoring required</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-label-mono-xs text-label-mono-xs font-bold">2</span>
+<span class="font-body-sm text-body-sm text-slate-800">Universal MCP (Model Context Protocol) support</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-label-mono-xs text-label-mono-xs font-bold">3</span>
+<span class="font-body-sm text-body-sm text-slate-800">Native support for Python, TypeScript, and Go</span>
+</div>
+</div>
+</div>
+<!-- Code Block Container (Developer IDE aesthetic) -->
+<div class="lg:col-span-7 bg-slate-900 rounded-xl shadow-xl border border-slate-800 overflow-hidden">
+<!-- Terminal Header -->
+<div class="bg-slate-950/80 px-space-md py-space-sm flex items-center justify-between border-b border-slate-800">
+<div class="flex items-center gap-space-2xs">
+<div class="w-3 h-3 rounded-full bg-rose-500/80"></div>
+<div class="w-3 h-3 rounded-full bg-amber-500/80"></div>
+<div class="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-400 ml-space-xs">agent_runner.py</span>
+</div>
+<div class="flex items-center gap-space-2xs">
+<span class="px-space-xs py-0.5 rounded bg-slate-800 text-emerald-400 font-label-code text-label-code border border-slate-700">Python SDK</span>
+<span class="px-space-xs py-0.5 rounded text-slate-400 hover:text-slate-200 font-label-code text-label-code">TypeScript</span>
+<span class="px-space-xs py-0.5 rounded text-slate-400 hover:text-slate-200 font-label-code text-label-code">cURL</span>
+</div>
+</div>
+<!-- Code Payload -->
+<div class="p-space-lg font-label-code text-label-code overflow-x-auto text-slate-200 leading-relaxed bg-slate-900">
+<pre class="text-slate-300"><span class="text-sky-400 font-medium">from</span> openai <span class="text-sky-400 font-medium">import</span> OpenAI
 
-      <footer>AgentMesh &mdash; every agent run, every tool call, every rupee.</footer>
-    </main>
-  </body>
-</html>
+<span class="text-slate-500"># 1. Point standard SDK to your AgentMesh Control Plane</span>
+client = OpenAI(
+    <span class="text-emerald-300">base_url</span>=<span class="text-emerald-400 font-semibold">"https://gateway.agentmesh.ai/v1"</span>,
+    <span class="text-emerald-300">api_key</span>=<span class="text-emerald-400">"am_live_938fd81c304a99"</span>  <span class="text-slate-500"># Your virtual agent key</span>
+)
+
+<span class="text-slate-500"># 2. Call with any model — Gateway intercepts, compresses &amp; routes</span>
+response = client.chat.completions.create(
+    <span class="text-emerald-300">model</span>=<span class="text-emerald-400">"auto-indic-hybrid"</span>,  <span class="text-slate-500"># Dynamically routed</span>
+    <span class="text-emerald-300">messages</span>=[
+        {<span class="text-emerald-300">"role"</span>: <span class="text-emerald-400">"user"</span>, <span class="text-emerald-300">"content"</span>: <span class="text-emerald-400">"ग्राहक का खाता विवरण और KYC स्थिति सत्यापित करें"</span>}
+    ],
+    <span class="text-emerald-300">extra_headers</span>={
+        <span class="text-emerald-300">"X-AgentMesh-Budget-Cap-INR"</span>: <span class="text-sky-400">"50.00"</span>,
+        <span class="text-emerald-300">"X-AgentMesh-PII-Guard"</span>: <span class="text-sky-400">"aadhaar,pan,phone"</span>
+    }
+)
+
+<span class="text-slate-500"># &gt;&gt; Intercepted by Sarvam-1 Indic Engine (4.2ms)</span>
+<span class="text-slate-500"># &gt;&gt; PII Scrubbed: 0 Aadhaar violations detected</span>
+<span class="text-slate-500"># &gt;&gt; Invoiced: ₹0.042 (Saved ₹0.21 vs raw upstream)</span>
+<span class="text-sky-400">print</span>(response.choices[<span class="text-amber-400">0</span>].message.content)</pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- =====================================================================
+       5. FINAL CONVERSION BANNER (Sleek Zoho/Stripe Crisp Container)
+       ===================================================================== -->
+<section class="max-w-[1280px] mx-auto px-margin py-space-3xl w-full">
+<div class="relative rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 p-space-2xl overflow-hidden shadow-xl text-center md:text-left border border-slate-800">
+<!-- Glow ambient element -->
+<div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center relative z-10">
+<div class="lg:col-span-7 space-y-space-sm">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-slate-800 border border-slate-700 text-emerald-400 font-label-mono-xs text-label-mono-xs uppercase tracking-wider font-semibold">
+<span>⚡ Deploy in 2 minutes</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-white">
+            Deploy your agent gateway today. <br/>
+            Start with 1,000,000 free tokens.
+          </h2>
+<p class="font-body-md text-body-md text-slate-300 max-w-xl">
+            Plug into your existing stack in under two minutes. Full FinOps telemetry, INR currency tracking, and MCP routing out of the box.
+          </p>
+</div>
+<div class="lg:col-span-5 flex flex-col gap-space-sm">
+<form method="get" action="/dashboard/keys" class="flex flex-col sm:flex-row gap-space-xs bg-slate-800/90 border border-slate-700 p-space-2xs rounded-lg shadow-inner">
+<input class="w-full bg-transparent px-space-md py-space-xs font-body-sm text-body-sm text-white placeholder:text-slate-400 focus:outline-none" placeholder="work@enterprise.in" type="email"/>
+<button type="submit" class="shrink-0 px-space-lg py-space-xs rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-headline-md text-body-sm font-bold transition-colors shadow-sm">
+              Get Virtual Key
+            </button>
+</form>
+<div class="flex items-center justify-center md:justify-start gap-space-md font-label-mono-xs text-label-mono-xs text-slate-400">
+<span class="flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-[14px] text-emerald-400">check</span> No credit card required
+            </span>
+<span class="flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-[14px] text-emerald-400">check</span> DPDP Act Certified
+            </span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-white border-t border-slate-200 text-slate-600"><div class="max-w-[1280px] mx-auto px-margin py-space-2xl"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-space-xl pb-space-2xl border-b border-slate-200"><div class="lg:col-span-2 space-y-space-md"><div class="flex items-center gap-space-xs"><div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600"><span class="material-symbols-outlined text-[20px]">hub</span></div><span class="font-headline-md text-headline-md text-slate-900">Agent<span class="text-emerald-600">Mesh</span></span></div><p class="font-body-sm text-body-sm text-slate-600 max-w-sm">Unified control plane for sovereign, reliable, and cost-governed multi-agent AI ecosystems in enterprise production.</p><div class="inline-flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-slate-50 border border-slate-200 font-label-mono-xs text-label-mono-xs"><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="text-slate-800 font-medium">All systems operational</span><span class="text-slate-300">|</span><span class="text-emerald-700 font-semibold">99.992% SLA</span></div></div><div class="space-y-space-sm"><h4 class="font-headline-md text-body-sm text-slate-900 uppercase tracking-wider font-semibold">Control Plane</h4><ul class="space-y-space-xs font-body-sm text-body-sm"><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/dashboard/mcp">MCP Router Gateway</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/dashboard/agents">Deterministic Guardrails</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/dashboard">Latency Optimizer</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/dashboard/keys">Agent Auth &amp; Policies</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/dashboard">Indic Model Routing</a></li></ul></div><div class="space-y-space-sm"><h4 class="font-headline-md text-body-sm text-slate-900 uppercase tracking-wider font-semibold">Cost Intelligence</h4><ul class="space-y-space-xs font-body-sm text-body-sm"><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/dashboard">INR Cost Telemetry</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/dashboard">Token Cache Yield</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/dashboard/agents">Dynamic Quantization</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/dashboard/budgets">FinOps Budget Alarms</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/dashboard">Provider Arbitration</a></li></ul></div><div class="space-y-space-sm"><h4 class="font-headline-md text-body-sm text-slate-900 uppercase tracking-wider font-semibold">Developers</h4><ul class="space-y-space-xs font-body-sm text-body-sm"><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/docs">Documentation</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/docs">SDK References</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/docs">Python &amp; Go Client</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/docs">Architecture Whitepaper</a></li><li class="hover:text-slate-900 transition-colors"><a class="hover:text-slate-900" href="/docs">Changelog</a></li></ul></div><div class="space-y-space-sm"><h4 class="font-headline-md text-body-sm text-slate-900 uppercase tracking-wider font-semibold">Enterprise Trust</h4><div class="flex flex-col gap-space-2xs font-label-badge text-label-badge"><span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-slate-50 border border-slate-200 text-slate-800"><span class="material-symbols-outlined text-[16px] text-emerald-600">verified_user</span>SOC 2 Type II Certified</span><span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-slate-50 border border-slate-200 text-slate-800"><span class="material-symbols-outlined text-[16px] text-emerald-600">verified_user</span>ISO 27001 Certified</span><span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-slate-50 border border-slate-200 text-slate-800"><span class="material-symbols-outlined text-[16px] text-sky-600">shield</span>GDPR &amp; DPDP Ready</span></div></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md font-body-sm text-body-sm text-slate-500"><div class="flex items-center gap-space-md"><p>© 2025 AgentMesh Inc. Sovereign control plane architecture.</p></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs bg-slate-50 px-space-xs py-space-2xs rounded-md border border-slate-200"><span class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase">Currency:</span><div class="flex items-center gap-space-2xs font-label-code text-label-code"><button class="px-space-xs py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold border border-emerald-300">INR (₹)</button><button class="px-space-xs py-0.5 rounded text-slate-500 hover:text-slate-800">USD ($)</button></div></div><div class="flex items-center gap-space-md"><a class="hover:text-slate-900 transition-colors" href="#">Privacy Policy</a><a class="hover:text-slate-900 transition-colors" href="#">Terms of Service</a><a class="hover:text-slate-900 transition-colors" href="#">Security Portal</a></div></div></div></div></footer></body></html>
