@@ -19,85 +19,128 @@
         </nav>
       </header>
 
-      <section style="max-width:760px;margin-bottom:48px;">
-        <p class="eyebrow" style="margin:0 0 8px;">The infrastructure layer for production AI agents</p>
-        <p style="font-size:15px;margin:0;">
+      <nav class="tabs">
+        <a href="/" class="active">Home</a>
+        <a href="/dashboard">Overview</a>
+        <a href="/dashboard/agents">Agents &amp; Budgets</a>
+        <a href="/dashboard/mcp">MCP Gateway</a>
+        <a href="/sandbox">Try it</a>
+        <a href="/dashboard/budgets">Alerts</a>
+        <a href="/dashboard/keys">API Keys</a>
+      </nav>
+
+      <section class="hero">
+        <p class="eyebrow hero-eyebrow">The infrastructure layer for production AI agents</p>
+        <h2 class="hero-title">One gateway. Every model. Every rupee tracked.</h2>
+        <p class="hero-sub">
           Every LLM call <em>and</em> MCP tool call your agents make passes through one gateway.
-          AgentMesh traces it, prices it in INR, caches it, enforces budgets, blocks PII, and
-          renders a live cost dashboard — so you always know exactly where every rupee goes.
+          AgentMesh authenticates it, caches it, compresses it, guards it, routes it, prices it in
+          INR, and traces it to a live dashboard &mdash; so you always know exactly where every rupee goes.
         </p>
-        <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;">
-          <a class="badge green" style="padding:10px 18px;text-decoration:none;" href="/sandbox">Try the Gateway Console &rarr;</a>
-          <a class="badge" style="padding:10px 18px;text-decoration:none;" href="/dashboard">Open Live Dashboard</a>
-          <a class="badge" style="padding:10px 18px;text-decoration:none;" href="/docs">Explore API Docs</a>
+        <div class="hero-actions">
+          <a class="badge green" href="/sandbox">Try the Gateway Console &rarr;</a>
+          <a class="badge" href="/dashboard">Open Live Dashboard</a>
+          <a class="badge" href="/dashboard/keys">Issue an API Key</a>
+          <a class="badge" href="/docs">Explore API Docs</a>
         </div>
       </section>
 
-      {% set demo_empty = data.totals.requests == 0 %}
-      {% include "demo_banner.html" %}
-
-      <section class="metrics-grid">
-        <article class="metric">
-          <span>Requests</span>
-          <strong>{{ data.month_totals.requests or 0 }}</strong>
-          <div class="sub">this month through the gateway</div>
-        </article>
-        <article class="metric">
-          <span>Month Spend</span>
-          <strong>&#8377;{{ "%.2f"|format(data.month_totals.cost or 0) }}</strong>
-          <div class="sub">LLM tokens + MCP tool calls</div>
-        </article>
-        <article class="metric">
-          <span>Cache Hit Rate</span>
-          <strong>{{ data.totals.cache_hit_rate }}%</strong>
-          <div class="sub">semantic cache savings</div>
-        </article>
-        <article class="metric">
-          <span>Tokens Saved</span>
-          <strong>{{ data.totals.tokens_saved or 0 }}</strong>
-          <div class="sub">compression + cache</div>
-        </article>
-        <article class="metric">
-          <span>PII Redacted</span>
-          <strong>{{ data.totals.pii_redactions or 0 }}</strong>
-          <div class="sub">Aadhaar / PAN / phone / email masked pre-provider</div>
-        </article>
+      <section class="panel how-it-works">
+        <h2>How it works</h2>
+        <p class="muted how-lead">A request to <span class="mono">/v1/chat/completions</span> (or <span class="mono">/v1/messages</span>) flows through the control plane in order:</p>
+        <ol class="steps">
+          <li>
+            <span class="step-label">Authenticate</span>
+            <p>Your virtual key (issued in the <a class="nav" href="/dashboard/keys">API Keys</a> tab) is verified. Every tenant is rate-limited per key via Redis.</p>
+          </li>
+          <li>
+            <span class="step-label">Cache lookup</span>
+            <p>Three tiers &mdash; exact match, then semantic similarity (embeddings), then a short-lived provider KV cache. Cache hits skip the providers entirely.</p>
+          </li>
+          <li>
+            <span class="step-label">Compress</span>
+            <p>Long prompts are losslessly compressed to a token budget, cutting cost before the request even leaves the network.</p>
+          </li>
+          <li>
+            <span class="step-label">Guardrails</span>
+            <p>PII (Aadhaar, PAN, phone, email, cards) is redacted pre-provider; JSON Schema output is enforced on the way back.</p>
+          </li>
+          <li>
+            <span class="step-label">Route</span>
+            <p>Language-aware routing sends Hindi / Tamil / Telugu / Marathi to Sarvam-1. Complexity routing picks the right model for the job, with an automatic fallback chain.</p>
+          </li>
+          <li>
+            <span class="step-label">Budget check</span>
+            <p>CostGuard compares the agent's monthly budget. At thresholds it alerts, auto-downgrades to a cheaper model, or hard-blocks with HTTP 402.</p>
+          </li>
+          <li>
+            <span class="step-label">Trace &amp; bill</span>
+            <p>Every step &mdash; LLM call, MCP tool call, retry, cache hit &mdash; is priced in INR and recorded as an OpenTelemetry span and usage event.</p>
+          </li>
+        </ol>
       </section>
 
-      <section class="panel">
-        <h2>What this project does</h2>
-        <div class="table-wrap">
-          <table>
-            <tbody>
-              <tr><td class="mono">Unified LLM gateway</td><td>OpenAI-compatible <span class="badge">/v1/chat/completions</span>, SSE streaming, semantic cache, prompt compression, model routing</td></tr>
-              <tr><td class="mono">MCP gateway</td><td>Register MCP servers once, invoke tools via <span class="badge">/v1/mcp/invoke</span> with auth, rate limits, health checks &amp; cost attribution</td></tr>
-              <tr><td class="mono">Cost intelligence</td><td>Per-run traces in &#8377;(INR): LLM tokens, tool calls, retries, cache &amp; compression savings</td></tr>
-              <tr><td class="mono">Budget enforcement</td><td>Per-agent monthly budgets, alert thresholds, auto-downgrade, optional HTTP 402 hard limit</td></tr>
-              <tr><td class="mono">Guardrails</td><td>PII redaction before prompts leave the network, JSON Schema structured output</td></tr>
-              <tr><td class="mono">Indic routing</td><td>Auto-detects Hindi / Tamil / Telugu / Marathi, routes to Sarvam-1</td></tr>
-              <tr><td class="mono">Observability</td><td>OpenTelemetry spans, Python SDK, live agent-run traces</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <section class="grid-2">
+        <section class="panel">
+          <h2>What it gives you</h2>
+          <ul class="feature-list muted">
+            <li><span class="mono">Unified LLM gateway</span> &mdash; OpenAI- and Anthropic-compatible endpoints for Cursor, Claude Desktop, OpenCode, or your own agents.</li>
+            <li><span class="mono">MCP gateway</span> &mdash; register MCP servers once (<span class="mono">/v1/mcp/registry</span>), invoke tools with auth, rate limits and health checks.</li>
+            <li><span class="mono">Cost intelligence</span> &mdash; per-run traces in INR: tokens, tool calls, retries, and cache/compression savings.</li>
+            <li><span class="mono">Budget enforcement</span> &mdash; per-agent monthly caps, alert thresholds, auto-downgrade and optional hard limits.</li>
+            <li><span class="mono">Guardrails</span> &mdash; PII redaction and JSON Schema structured output at the gateway layer.</li>
+            <li><span class="mono">Observability</span> &mdash; OpenTelemetry spans, a Python SDK, and a live trace view for every agent run.</li>
+          </ul>
+        </section>
+
+        <section class="panel">
+          <h2>Providers</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Provider</th><th>Languages</th><th>Cost / 1M tokens</th><th>Use case</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">Ollama</td><td>All</td><td>&#8377;0 (local)</td><td>Dev, privacy, offline</td></tr>
+                <tr><td class="mono">Sarvam-1</td><td>Hindi, Tamil, Telugu, Marathi</td><td>&#8377;150</td><td>Indic queries</td></tr>
+                <tr><td class="mono">OpenAI</td><td>All</td><td>&#8377;2,000</td><td>General reasoning</td></tr>
+                <tr><td class="mono">Anthropic</td><td>All</td><td>&#8377;2,200</td><td>Long context, analysis</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
       </section>
 
       <section class="panel">
         <h2>Try it in 30 seconds</h2>
         <div style="padding:20px;">
-          <p style="margin:0 0 12px;color:var(--muted);">1&nbsp;&middot;&nbsp;Issue a virtual key (admin-only) and copy the returned <span class="mono">sk&hellip;</span> value:</p>
+          <p style="margin:0 0 12px;color:var(--muted);">1&nbsp;&middot;&nbsp;Issue a virtual key from the <a class="nav" href="/dashboard/keys">API Keys</a> page (admin-only) and copy the returned <span class="mono">sk&hellip;</span> value:</p>
           <div class="code">curl -X POST {{ request.base_url }}v1/admin/keys \
   -H "Authorization: Bearer $ADMIN_API_KEY" -H "Content-Type: application/json" \
   -d '{"name":"my-agent"}'</div>
           <p style="margin:16px 0 12px;color:var(--muted);">2&nbsp;&middot;&nbsp;Chat through the gateway (it prices, traces, caches &amp; guards every call):</p>
           <div class="code">curl -X POST {{ request.base_url }}v1/chat/completions \
   -H "Authorization: Bearer sk-..." -H "Content-Type: application/json" \
-  -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Explain what this gateway does in one line"}]}'</div>
+  -d '{"model":"auto","messages":[{"role":"user","content":"Explain what this gateway does in one line"}]}'</div>
           <p style="margin:16px 0 12px;color:var(--muted);">3&nbsp;&middot;&nbsp;Invoke an MCP tool through the gateway:</p>
           <div class="code">curl -X POST {{ request.base_url }}v1/mcp/invoke \
   -H "Authorization: Bearer sk-..." -H "Content-Type: application/json" \
   -d '{"server":"local_tools","tool":"echo","arguments":{"text":"hello"}}'</div>
-          <p style="margin:16px 0 0;color:var(--muted);">4&nbsp;&middot;&nbsp;Watch the calls land in the dashboard:</p>
+          <p style="margin:16px 0 0;color:var(--muted);">4&nbsp;&middot;&nbsp;Watch the calls land in the <a class="nav" href="/dashboard">dashboard</a>:</p>
           <div class="code">open {{ request.base_url }}dashboard</div>
+        </div>
+      </section>
+
+      <section>
+        <div class="fin-cta">
+          <div>
+            <strong style="color:var(--text-heading);font-size:14px;">Ready to look around?</strong>
+            <p class="muted" style="margin:4px 0 0;">See live costs and traces, manage agents and budgets, configure MCP servers, or issue your first key.</p>
+          </div>
+          <div class="hero-actions">
+            <a class="badge green" href="/dashboard">Live Dashboard</a>
+            <a class="badge" href="/dashboard/agents">Agents &amp; Budgets</a>
+            <a class="badge" href="/dashboard/mcp">MCP Gateway</a>
+            <a class="badge" href="/dashboard/keys">API Keys</a>
+          </div>
         </div>
       </section>
 

@@ -2,12 +2,34 @@
 {% block heading %}Virtual API Keys{% endblock %}
 {% block content %}
 
-<section class="panel">
-  <h2>Issued Keys</h2>
+<div class="panel with-toolbar">
+  <div class="toolbar">
+    <h2>Issued Keys</h2>
+    <button type="button" class="action" id="add-key-btn" onclick="openAddKey()">+ Add Key</button>
+  </div>
+
+  <div id="key-form-wrap" class="key-form hidden">
+    <form id="key-form" onsubmit="createKey(event)">
+      <div class="sb-field" style="border-bottom:0;">
+        <label for="key-name">Key name</label>
+        <input type="text" id="key-name" name="name" placeholder="e.g. my-agent" maxlength="80" required autocomplete="off">
+        <div class="form-row">
+          <button type="submit" class="action" id="key-form-submit">Create key</button>
+          <button type="button" class="btn-ghost" onclick="closeAddKey()">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div id="key-result-wrap" class="key-result hidden">
+    <p class="muted" style="margin:0 0 8px;">Copy this key now. It is shown only once &mdash; we only keep its SHA-256 hash.</p>
+    <div class="code" id="key-result"></div>
+  </div>
+
   <div class="table-wrap">
     <table>
       <thead><tr><th>ID</th><th>Name</th><th>Prefix</th><th>Created</th></tr></thead>
-      <tbody>
+      <tbody id="keys-body">
         {% for key in keys %}
         <tr>
           <td>{{ key.id }}</td>
@@ -16,19 +38,87 @@
           <td>{{ key.created_at }}</td>
         </tr>
         {% else %}
-        <tr><td colspan="4" class="empty">No keys issued yet. Issue one via <span class="mono">POST /v1/admin/keys</span>.</td></tr>
+        <tr id="keys-empty"><td colspan="4" class="empty">No keys issued yet. Click &ldquo;+ Add Key&rdquo; above to issue your first one.</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-</section>
+</div>
 
 <section class="panel">
-  <h2>Issue a Key</h2>
+  <h2>Issue a Key via API</h2>
   <div class="code">curl -X POST {{ request.base_url }}v1/admin/keys \
   -H "Authorization: Bearer {{ 'ADMIN_API_KEY' if not keys else 'sk-admin...' }}" -H "Content-Type: application/json" \
   -d '{"name":"my-agent"}'</div>
   <p class="muted">The full plaintext key is shown only once at creation. Store the SHA-256 hash only.</p>
 </section>
+
+<script>
+function openAddKey() {
+  document.getElementById('key-form-wrap').classList.remove('hidden');
+  document.getElementById('key-form-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.getElementById('key-name').focus();
+}
+
+function closeAddKey() {
+  document.getElementById('key-form-wrap').classList.add('hidden');
+  document.getElementById('key-result-wrap').classList.add('hidden');
+  document.getElementById('key-form').reset();
+}
+
+async function createKey(evt) {
+  evt.preventDefault();
+  const name = document.getElementById('key-name').value.trim();
+  const submit = document.getElementById('key-form-submit');
+  const resultWrap = document.getElementById('key-result-wrap');
+  const result = document.getElementById('key-result');
+  submit.disabled = true;
+  submit.textContent = 'Creating\u2026';
+  resultWrap.classList.add('hidden');
+  try {
+    const res = await fetch('{{ request.base_url }}v1/admin/keys', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name })
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const detail = body.detail || ('HTTP ' + res.status);
+      result.textContent = 'Failed to create key: ' + detail +
+        '\n\nIf admin auth is enforced (ALLOW_NO_AUTH=false), create it with:\n\n' +
+        'curl -X POST {{ request.base_url }}v1/admin/keys \\\n' +
+        '  -H "Authorization: Bearer $ADMIN_API_KEY" -H "Content-Type: application/json" \\\n' +
+        '  -d \'{"name":"my-agent"}\'';
+      resultWrap.classList.remove('hidden');
+      resultWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    result.textContent = body.key;
+    resultWrap.classList.remove('hidden');
+    document.getElementById('key-form').reset();
+    const empty = document.getElementById('keys-empty');
+    const row = document.createElement('tr');
+    const cells = ['id', 'name', 'key_prefix'].map((k) => {
+      const td = document.createElement('td');
+      if (k === 'key_prefix') td.className = 'mono';
+      td.textContent = body[k];
+      return td;
+    });
+    const created = document.createElement('td');
+    created.textContent = new Date().toISOString().slice(0, 10);
+    cells.push(created);
+    cells.forEach((td) => row.appendChild(td));
+    resultWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (empty) { empty.remove(); }
+    document.getElementById('keys-body').appendChild(row);
+  } catch (err) {
+    result.textContent = 'Failed to create key: ' + err;
+    resultWrap.classList.remove('hidden');
+  } finally {
+    submit.disabled = false;
+    submit.textContent = 'Create key';
+  }
+}
+</script>
 
 {% endblock %}
