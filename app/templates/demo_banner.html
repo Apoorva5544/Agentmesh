@@ -15,11 +15,14 @@ async function seedDemo() {
   if (btn) { btn.disabled = false; btn.textContent = 'Load demo data'; }
 }
 </script>
-<section class="panel demo-empty">
-  <div>
-    <strong style="color:var(--text-heading);font-size:14px;">This dashboard is empty</strong>
-    <p class="muted" style="margin:4px 0 0;">Load a realistic slice of gateway activity &mdash; agents, budgets, MCP tools, costs and traces &mdash; so you can click around and run the API examples.</p>
-  </div>
-  <button type="button" class="action" id="seed-demo-btn" onclick="seedDemo()">Load demo data</button>
+<section class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md mb-space-xl bg-white border border-slate-200 rounded-xl p-space-lg shadow-md">
+<div class="space-y-space-2xs">
+<div class="font-headline-md text-body-md text-slate-900 font-semibold">This dashboard is empty</div>
+<p class="font-body-sm text-body-sm text-slate-600 max-w-2xl">Load a realistic slice of gateway activity &mdash; agents, budgets, MCP tools, costs and traces &mdash; so you can click around and run the API examples.</p>
+</div>
+<button type="button" id="seed-demo-btn" onclick="seedDemo()" class="shrink-0 inline-flex items-center gap-space-2xs px-space-md py-space-xs rounded-lg bg-emerald-600 text-white font-headline-md text-body-sm hover:bg-emerald-700 transition-all shadow-sm">
+<span>Load demo data</span>
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+</button>
 </section>
 {% endif %}

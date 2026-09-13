@@ -1,142 +1,203 @@
-{% extends "base.html" %}
-{% block heading %}Control Plane Overview{% endblock %}
-{% block content %}
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+{% include "partials/head.html" %}
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased selection:bg-emerald-100 selection:text-emerald-900">
+{% include "partials/header.html" %}
+<main class="w-full pt-20 bg-background min-h-[calc(100vh-80px)]">
+<div class="flex flex-col w-full text-on-surface">
+
+<section class="max-w-[1280px] mx-auto px-margin pt-space-2xl pb-space-3xl w-full">
 
 {% set demo_empty = data.totals.requests == 0 %}
 {% include "demo_banner.html" %}
 
-<section class="metrics-grid">
-  <article class="metric">
-    <span>Requests</span>
-    <strong>{{ data.totals.requests or 0 }}</strong>
-    <div class="sub">LLM calls through the gateway</div>
-  </article>
-  <article class="metric">
-    <span>Cache Hit Rate</span>
-    <strong>{{ data.totals.cache_hit_rate }}%</strong>
-    <div class="sub">semantic cache</div>
-  </article>
-  <article class="metric">
-    <span>Month Spend</span>
-    <strong>&#8377;{{ "%.2f"|format(data.month_totals.cost or 0) }}</strong>
-    <div class="sub">&#8377;{{ "%.2f"|format(data.month_totals.cost_saved or 0) }} saved in month</div>
-  </article>
-  <article class="metric">
-    <span>All-time Saved</span>
-    <strong>&#8377;{{ "%.2f"|format(data.totals.cost_saved or 0) }}</strong>
-    <div class="sub">from cache + compression</div>
-  </article>
-  <article class="metric">
-    <span>Tokens Saved</span>
-    <strong>{{ data.totals.tokens_saved or 0 }}</strong>
-    <div class="sub">compression + cache</div>
-  </article>
-  <article class="metric">
-    <span>PII Redactions</span>
-    <strong>{{ data.totals.pii_redactions or 0 }}</strong>
-    <div class="sub">Aadhaar / PAN / phone / email masked pre-provider</div>
-  </article>
-  <article class="metric">
-    <span>JSON Schema Compliance</span>
-    <strong>
-      {% if data.totals.schema_compliance_rate is not none %}{{ data.totals.schema_compliance_rate }}%{% else %}n/a{% endif %}
-    </strong>
-    <div class="sub">{{ data.totals.schema_requests or 0 }} schema-guarded responses</div>
-  </article>
-</section>
-
-<div class="grid-2">
-  <section class="panel">
-    <h2>Spend by Model</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Model</th><th>Requests</th><th>Cache</th><th>Cost</th><th>Saved</th></tr></thead>
-        <tbody>
-          {% for row in data.by_model %}
-          <tr>
-            <td class="mono">{{ row.provider }} / {{ row.model }}</td>
-            <td>{{ row.requests }}</td>
-            <td>{{ row.cache_hits }}</td>
-            <td>&#8377;{{ "%.2f"|format(row.cost_inr or 0) }}</td>
-            <td>&#8377;{{ "%.2f"|format(row.cost_saved or 0) }}</td>
-          </tr>
-          {% else %}
-          <tr><td colspan="5" class="empty">No LLM traffic recorded yet.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="panel">
-    <h2>MCP Tool Spend</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Tool</th><th>Calls</th><th>Cost</th></tr></thead>
-        <tbody>
-          {% for row in data.by_tool %}
-          <tr>
-            <td class="mono">{{ row.tool }}</td>
-            <td>{{ row.calls }}</td>
-            <td>&#8377;{{ "%.2f"|format(row.cost_inr or 0) }}</td>
-          </tr>
-          {% else %}
-          <tr><td colspan="3" class="empty">No MCP tool calls yet. Register a server then invoke tools.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </section>
+<!-- Page Heading -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md mb-space-xl">
+<div class="space-y-space-xs">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-label-mono-xs text-label-mono-xs uppercase tracking-wider font-semibold">
+<span class="material-symbols-outlined text-[16px]">monitoring</span>
+            Control Plane Overview
+          </div>
+<h1 class="font-headline-xl text-headline-xl text-slate-900">Live Gateway Telemetry</h1>
+<p class="font-body-md text-body-md text-slate-600 max-w-2xl">
+            Real-time INR cost intelligence, cache yield, guardrail activity and agent runs — every invocation valued in ₹ and traced end-to-end.
+          </p>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span></span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 font-medium uppercase tracking-wider">Streaming live</span>
+<span class="px-space-xs py-space-2xs rounded bg-emerald-100 text-emerald-800 font-label-code text-label-code font-bold border border-emerald-200">{{ data.totals.cache_hit_rate }}% Cache Hit</span>
+</div>
 </div>
 
-<section class="panel">
-  <h2>Recent Agent Runs</h2>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Run</th><th>Agent</th><th>Time</th><th>Steps</th><th>Cache</th><th>Cost</th><th>Status</th></tr></thead>
-      <tbody>
-        {% for run in data.recent_runs %}
-        <tr>
-          <td class="mono"><a class="nav" href="/dashboard/runs/{{ run.run_id }}">{{ run.run_id }}</a></td>
-          <td>{{ run.agent_id }}</td>
-          <td>{{ run.created_at }}</td>
-          <td>{{ run.step_count }}</td>
-          <td>{{ run.cache_hits }}</td>
-          <td>&#8377;{{ "%.2f"|format(run.total_cost_inr or 0) }}</td>
-          <td>
-            {% if run.status == 'completed' %}<span class="badge green">completed</span>
-            {% elif run.status == 'failed' %}<span class="badge red">failed</span>
-            {% else %}<span class="badge gray">{{ run.status }}</span>{% endif %}
-          </td>
-        </tr>
-        {% else %}
-        <tr><td colspan="7" class="empty">No agent runs yet. Try <span class="mono">/v1/agents/demo/run</span>.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-space-md">
+<div class="bg-white border border-slate-200 rounded-xl p-space-lg shadow-md space-y-space-2xs">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">Requests</span>
+<span class="material-symbols-outlined text-[18px] text-slate-400">call_received</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-slate-900 font-bold">{{ data.totals.requests or 0 }}</div>
+<div class="font-body-sm text-body-sm text-slate-500">LLM calls through the gateway</div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl p-space-lg shadow-md space-y-space-2xs">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">Cache Hit Rate</span>
+<span class="material-symbols-outlined text-[18px] text-slate-400">bolt</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-slate-900 font-bold">{{ data.totals.cache_hit_rate }}%</div>
+<div class="font-body-sm text-body-sm text-slate-500">3-tier semantic cache yield</div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl p-space-lg shadow-md space-y-space-2xs">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">Month Spend</span>
+<span class="material-symbols-outlined text-[18px] text-slate-400">currency_rupee</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-slate-900 font-bold">&#8377;{{ "%.2f"|format(data.month_totals.cost or 0) }}</div>
+<div class="font-body-sm text-body-sm text-slate-500">&#8377;{{ "%.2f"|format(data.month_totals.cost_saved or 0) }} saved this month</div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl p-space-lg shadow-md space-y-space-2xs">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">All-time Saved</span>
+<span class="material-symbols-outlined text-[18px] text-slate-400">savings</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-slate-900 font-bold">&#8377;{{ "%.2f"|format(data.totals.cost_saved or 0) }}</div>
+<div class="font-body-sm text-body-sm text-slate-500">from cache + compression</div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl p-space-lg shadow-md space-y-space-2xs">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">Tokens Saved</span>
+<span class="material-symbols-outlined text-[18px] text-slate-400">token</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-slate-900 font-bold">{{ data.totals.tokens_saved or 0 }}</div>
+<div class="font-body-sm text-body-sm text-slate-500">compression + cache hits</div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl p-space-lg shadow-md space-y-space-2xs">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">PII Redactions</span>
+<span class="material-symbols-outlined text-[18px] text-slate-400">shield_person</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-slate-900 font-bold">{{ data.totals.pii_redactions or 0 }}</div>
+<div class="font-body-sm text-body-sm text-slate-500">Aadhaar / PAN / phone / email masked</div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl p-space-lg shadow-md space-y-space-2xs sm:col-span-2 xl:col-span-1">
+<div class="flex items-center justify-between">
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">Schema Compliance</span>
+<span class="material-symbols-outlined text-[18px] text-slate-400">verified</span>
+</div>
+<div class="font-headline-xl text-headline-xl text-slate-900 font-bold">{% if data.totals.schema_compliance_rate is not none %}{{ data.totals.schema_compliance_rate }}%{% else %}n/a{% endif %}</div>
+<div class="font-body-sm text-body-sm text-slate-500">{{ data.totals.schema_requests or 0 }} schema-guarded responses</div>
+</div>
+</div>
+
+<!-- Spend by Model + MCP Tool Spend -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg mt-space-xl">
+<section class="lg:col-span-7 bg-white border border-slate-200 rounded-xl shadow-md overflow-hidden">
+<div class="flex items-center justify-between px-space-lg py-space-md border-b border-slate-200">
+<h2 class="font-headline-md text-headline-md text-slate-900">Spend by Model</h2>
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-700 px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200/60 font-semibold">INR / token</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead><tr class="border-b border-slate-200 bg-slate-50/70 font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider"><th class="px-space-lg py-space-sm font-semibold">Model</th><th class="px-space-lg py-space-sm font-semibold">Requests</th><th class="px-space-lg py-space-sm font-semibold">Cache</th><th class="px-space-lg py-space-sm font-semibold">Cost</th><th class="px-space-lg py-space-sm font-semibold">Saved</th></tr></thead>
+<tbody class="divide-y divide-slate-100 font-body-sm text-body-sm">
+{% for row in data.by_model %}
+<tr class="hover:bg-slate-50/60 transition-colors">
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-slate-900">{{ row.provider }} / {{ row.model }}</td>
+<td class="px-space-lg py-space-sm text-slate-700">{{ row.requests }}</td>
+<td class="px-space-lg py-space-sm text-slate-700">{{ row.cache_hits }}</td>
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-slate-900">&#8377;{{ "%.2f"|format(row.cost_inr or 0) }}</td>
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-emerald-700 font-semibold">&#8377;{{ "%.2f"|format(row.cost_saved or 0) }}</td>
+</tr>
+{% else %}
+<tr><td colspan="5" class="px-space-lg py-space-xl text-center text-slate-500">No LLM traffic recorded yet.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</section>
+<section class="lg:col-span-5 bg-white border border-slate-200 rounded-xl shadow-md overflow-hidden">
+<div class="flex items-center justify-between px-space-lg py-space-md border-b border-slate-200">
+<h2 class="font-headline-md text-headline-md text-slate-900">MCP Tool Spend</h2>
+<span class="font-label-mono-xs text-label-mono-xs text-sky-700 px-space-xs py-space-2xs rounded bg-sky-50 border border-sky-200/60 font-semibold">MCP Protocol</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead><tr class="border-b border-slate-200 bg-slate-50/70 font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider"><th class="px-space-lg py-space-sm font-semibold">Tool</th><th class="px-space-lg py-space-sm font-semibold">Calls</th><th class="px-space-lg py-space-sm font-semibold">Cost</th></tr></thead>
+<tbody class="divide-y divide-slate-100 font-body-sm text-body-sm">
+{% for row in data.by_tool %}
+<tr class="hover:bg-slate-50/60 transition-colors">
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-slate-900">{{ row.tool }}</td>
+<td class="px-space-lg py-space-sm text-slate-700">{{ row.calls }}</td>
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-slate-900">&#8377;{{ "%.2f"|format(row.cost_inr or 0) }}</td>
+</tr>
+{% else %}
+<tr><td colspan="3" class="px-space-lg py-space-xl text-center text-slate-500">No MCP tool calls yet. Register a server then invoke tools.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</section>
+</div>
+
+<!-- Recent Agent Runs -->
+<section class="bg-white border border-slate-200 rounded-xl shadow-md overflow-hidden mt-space-xl">
+<div class="flex items-center justify-between px-space-lg py-space-md border-b border-slate-200">
+<h2 class="font-headline-md text-headline-md text-slate-900">Recent Agent Runs</h2>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 font-medium">OpenTelemetry powered</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead><tr class="border-b border-slate-200 bg-slate-50/70 font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider"><th class="px-space-lg py-space-sm font-semibold">Run</th><th class="px-space-lg py-space-sm font-semibold">Agent</th><th class="px-space-lg py-space-sm font-semibold">Time</th><th class="px-space-lg py-space-sm font-semibold">Steps</th><th class="px-space-lg py-space-sm font-semibold">Cache</th><th class="px-space-lg py-space-sm font-semibold">Cost</th><th class="px-space-lg py-space-sm font-semibold">Status</th></tr></thead>
+<tbody class="divide-y divide-slate-100 font-body-sm text-body-sm">
+{% for run in data.recent_runs %}
+<tr class="hover:bg-slate-50/60 transition-colors">
+<td class="px-space-lg py-space-sm"><a class="font-label-code text-label-code text-emerald-700 hover:text-emerald-900 hover:underline underline-offset-2" href="/dashboard/runs/{{ run.run_id }}">{{ run.run_id }}</a></td>
+<td class="px-space-lg py-space-sm text-slate-700">{{ run.agent_id }}</td>
+<td class="px-space-lg py-space-sm text-slate-500">{{ run.created_at }}</td>
+<td class="px-space-lg py-space-sm text-slate-700">{{ run.step_count }}</td>
+<td class="px-space-lg py-space-sm text-slate-700">{{ run.cache_hits }}</td>
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-slate-900">&#8377;{{ "%.2f"|format(run.total_cost_inr or 0) }}</td>
+<td class="px-space-lg py-space-sm">{% if run.status == 'completed' %}<span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded-full bg-emerald-50 text-emerald-700 font-label-mono-xs text-label-mono-xs font-semibold border border-emerald-200"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>completed</span>{% elif run.status == 'failed' %}<span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded-full bg-rose-50 text-rose-700 font-label-mono-xs text-label-mono-xs font-semibold border border-rose-200"><span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>failed</span>{% else %}<span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded-full bg-slate-100 text-slate-700 font-label-mono-xs text-label-mono-xs font-semibold border border-slate-200"><span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>{{ run.status }}</span>{% endif %}</td>
+</tr>
+{% else %}
+<tr><td colspan="7" class="px-space-lg py-space-xl text-center text-slate-500">No agent runs yet. Try <span class="font-label-code text-label-code text-slate-900">/v1/agents/demo/run</span>.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
 </section>
 
-<section class="panel">
-  <h2>Spend by Agent</h2>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Agent</th><th>Requests</th><th>Cost</th><th>Saved</th><th>Cache Hits</th></tr></thead>
-      <tbody>
-        {% for row in data.by_agent %}
-        <tr>
-          <td>{{ row.agent_id }}</td>
-          <td>{{ row.requests }}</td>
-          <td>&#8377;{{ "%.2f"|format(row.cost_inr or 0) }}</td>
-          <td>&#8377;{{ "%.2f"|format(row.cost_saved or 0) }}</td>
-          <td>{{ row.cache_hits }}</td>
-        </tr>
-        {% else %}
-        <tr><td colspan="5" class="empty">No agent-attributed usage yet.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+<!-- Spend by Agent -->
+<section class="bg-white border border-slate-200 rounded-xl shadow-md overflow-hidden mt-space-xl">
+<div class="flex items-center justify-between px-space-lg py-space-md border-b border-slate-200">
+<h2 class="font-headline-md text-headline-md text-slate-900">Spend by Agent</h2>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 font-medium">Per-agent INR attribution</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead><tr class="border-b border-slate-200 bg-slate-50/70 font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider"><th class="px-space-lg py-space-sm font-semibold">Agent</th><th class="px-space-lg py-space-sm font-semibold">Requests</th><th class="px-space-lg py-space-sm font-semibold">Cost</th><th class="px-space-lg py-space-sm font-semibold">Saved</th><th class="px-space-lg py-space-sm font-semibold">Cache Hits</th></tr></thead>
+<tbody class="divide-y divide-slate-100 font-body-sm text-body-sm">
+{% for row in data.by_agent %}
+<tr class="hover:bg-slate-50/60 transition-colors">
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-slate-900">{{ row.agent_id }}</td>
+<td class="px-space-lg py-space-sm text-slate-700">{{ row.requests }}</td>
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-slate-900">&#8377;{{ "%.2f"|format(row.cost_inr or 0) }}</td>
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-emerald-700 font-semibold">&#8377;{{ "%.2f"|format(row.cost_saved or 0) }}</td>
+<td class="px-space-lg py-space-sm text-slate-700">{{ row.cache_hits }}</td>
+</tr>
+{% else %}
+<tr><td colspan="5" class="px-space-lg py-space-xl text-center text-slate-500">No agent-attributed usage yet.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
 </section>
 
-{% endblock %}
+</section>
+</div></main>
+{% include "partials/footer.html" %}
+</body>
+</html>
