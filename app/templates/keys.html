@@ -1,58 +1,107 @@
-{% extends "base.html" %}
-{% block heading %}Virtual API Keys{% endblock %}
-{% block content %}
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+{% include "partials/head.html" %}
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased selection:bg-emerald-100 selection:text-emerald-900">
+{% include "partials/header.html" %}
+<main class="w-full pt-20 bg-background min-h-[calc(100vh-80px)]">
+<div class="flex flex-col w-full text-on-surface">
 
-<div class="panel with-toolbar">
-  <div class="toolbar">
-    <h2>Issued Keys</h2>
-    <button type="button" class="action" id="add-key-btn" onclick="openAddKey()">+ Add Key</button>
-  </div>
+<section class="max-w-[1280px] mx-auto px-margin pt-space-2xl pb-space-3xl w-full">
 
-  <div id="key-form-wrap" class="key-form hidden">
-    <form id="key-form" onsubmit="createKey(event)">
-      <div class="sb-field" style="border-bottom:0;">
-        <label for="key-name">Key name</label>
-        <input type="text" id="key-name" name="name" placeholder="e.g. my-agent" maxlength="80" required autocomplete="off">
-        <div class="form-row">
-          <button type="submit" class="action" id="key-form-submit">Create key</button>
-          <button type="button" class="btn-ghost" onclick="closeAddKey()">Cancel</button>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <div id="key-result-wrap" class="key-result hidden">
-    <p class="muted" style="margin:0 0 8px;">Copy this key now. It is shown only once &mdash; we only keep its SHA-256 hash.</p>
-    <div class="code" id="key-result"></div>
-  </div>
-
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>ID</th><th>Name</th><th>Prefix</th><th>Created</th></tr></thead>
-      <tbody id="keys-body">
-        {% for key in keys %}
-        <tr>
-          <td>{{ key.id }}</td>
-          <td>{{ key.name }}</td>
-          <td class="mono">{{ key.key_prefix }}</td>
-          <td>{{ key.created_at }}</td>
-        </tr>
-        {% else %}
-        <tr id="keys-empty"><td colspan="4" class="empty">No keys issued yet. Click &ldquo;+ Add Key&rdquo; above to issue your first one.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+<!-- Page Heading -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md mb-space-xl">
+<div class="space-y-space-xs">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-label-mono-xs text-label-mono-xs uppercase tracking-wider font-semibold">
+<span class="material-symbols-outlined text-[16px]">vpn_key</span>
+            Agent Auth &amp; Policies
+          </div>
+<h1 class="font-headline-xl text-headline-xl text-slate-900">Virtual API Keys</h1>
+<p class="font-body-md text-body-md text-slate-600 max-w-2xl">
+            Issue virtual agent keys validated in sub-millisecond Redis clusters &mdash; only SHA-256 hashes are stored, never the plaintext.
+          </p>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<span class="px-space-xs py-space-2xs rounded bg-emerald-100 text-emerald-800 font-label-code text-label-code font-bold border border-emerald-200">{{ keys|length }} Keys</span>
+</div>
 </div>
 
-<section class="panel">
-  <h2>Issue a Key via API</h2>
-  <div class="code">curl -X POST {{ request.base_url }}v1/admin/keys \
-  -H "Authorization: Bearer {{ 'ADMIN_API_KEY' if not keys else 'sk-admin...' }}" -H "Content-Type: application/json" \
-  -d '{"name":"my-agent"}'</div>
-  <p class="muted">The full plaintext key is shown only once at creation. Store the SHA-256 hash only.</p>
+<!-- Issued Keys -->
+<section class="bg-white border border-slate-200 rounded-xl shadow-md overflow-hidden">
+<div class="flex items-center justify-between px-space-lg py-space-md border-b border-slate-200">
+<h2 class="font-headline-md text-headline-md text-slate-900">Issued Keys</h2>
+<button type="button" id="add-key-btn" onclick="openAddKey()" class="inline-flex items-center gap-space-2xs px-space-md py-space-xs rounded-lg bg-emerald-600 text-white font-headline-md text-body-sm hover:bg-emerald-700 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[16px]">add</span><span>Add Key</span>
+</button>
+</div>
+
+<div id="key-form-wrap" class="hidden p-space-lg border-b border-slate-200 bg-slate-50/70">
+<form id="key-form" onsubmit="createKey(event)" class="flex flex-col sm:flex-row items-start sm:items-end gap-space-md">
+<div class="flex-1 w-full space-y-space-2xs">
+<label for="key-name" class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">Key name</label>
+<input type="text" id="key-name" name="name" placeholder="e.g. my-agent" maxlength="80" required autocomplete="off" class="w-full bg-white border border-slate-300 rounded-lg px-space-md py-space-xs font-body-sm text-body-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"/>
+</div>
+<div class="flex items-center gap-space-xs">
+<button type="submit" class="action inline-flex items-center px-space-md py-space-xs rounded-lg bg-emerald-600 text-white font-headline-md text-body-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm" id="key-form-submit">Create key</button>
+<button type="button" onclick="closeAddKey()" class="inline-flex items-center px-space-md py-space-xs rounded-lg bg-white border border-slate-200 text-slate-700 font-headline-md text-body-sm hover:bg-slate-50 transition-colors">Cancel</button>
+</div>
+</form>
+</div>
+
+<div id="key-result-wrap" class="hidden p-space-lg border-b border-slate-200">
+<p class="font-body-sm text-body-sm text-slate-600 mb-space-xs">Copy this key now. It is shown only once &mdash; we only keep its SHA-256 hash.</p>
+<div id="key-result" class="font-label-code text-label-code text-slate-900 bg-slate-50 border border-slate-200 rounded-lg p-space-md whitespace-pre-wrap break-all"></div>
+</div>
+
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead><tr class="border-b border-slate-200 bg-slate-50/70 font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider"><th class="px-space-lg py-space-sm font-semibold">ID</th><th class="px-space-lg py-space-sm font-semibold">Name</th><th class="px-space-lg py-space-sm font-semibold">Prefix</th><th class="px-space-lg py-space-sm font-semibold">Created</th></tr></thead>
+<tbody id="keys-body" class="divide-y divide-slate-100 font-body-sm text-body-sm">
+{% for key in keys %}
+<tr class="hover:bg-slate-50/60 transition-colors">
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-slate-700">{{ key.id }}</td>
+<td class="px-space-lg py-space-sm text-slate-900">{{ key.name }}</td>
+<td class="px-space-lg py-space-sm font-label-code text-label-code text-emerald-700">{{ key.key_prefix }}</td>
+<td class="px-space-lg py-space-sm text-slate-500">{{ key.created_at }}</td>
+</tr>
+{% else %}
+<tr id="keys-empty"><td colspan="4" class="px-space-lg py-space-xl text-center text-slate-500">No keys issued yet. Click &ldquo;Add Key&rdquo; above to issue your first one.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
 </section>
 
+<!-- Issue a Key via API -->
+<section class="bg-white border border-slate-200 rounded-xl shadow-md overflow-hidden mt-space-xl">
+<div class="flex items-center justify-between px-space-lg py-space-md border-b border-slate-200">
+<h2 class="font-headline-md text-headline-md text-slate-900">Issue a Key via API</h2>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 font-medium">REST</span>
+</div>
+<div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden mt-space-lg mx-space-lg mb-space-lg">
+<div class="bg-slate-950/80 px-space-md py-space-sm flex items-center justify-between border-b border-slate-800">
+<div class="flex items-center gap-space-2xs">
+<div class="w-3 h-3 rounded-full bg-rose-500/80"></div>
+<div class="w-3 h-3 rounded-full bg-amber-500/80"></div>
+<div class="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-400 ml-space-xs">curl</span>
+</div>
+<span class="px-space-xs py-0.5 rounded bg-slate-800 text-emerald-400 font-label-code text-label-code border border-slate-700">admin</span>
+</div>
+<div class="p-space-lg font-label-code text-label-code overflow-x-auto text-slate-200 leading-relaxed bg-slate-900">
+<pre>curl -X POST {{ request.base_url }}v1/admin/keys \
+  -H "Authorization: Bearer {{ 'ADMIN_API_KEY' if not keys else 'sk-admin...' }}" -H "Content-Type: application/json" \
+  -d '{"name":"my-agent"}'</pre>
+</div>
+</div>
+<p class="px-space-lg pb-space-lg font-body-sm text-body-sm text-slate-600">The full plaintext key is shown only once at creation. Store the SHA-256 hash only.</p>
+</section>
+
+</section>
+</div></main>
+{% include "partials/footer.html" %}
+</body>
 <script>
 function openAddKey() {
   document.getElementById('key-form-wrap').classList.remove('hidden');
@@ -100,7 +149,7 @@ async function createKey(evt) {
     const row = document.createElement('tr');
     const cells = ['id', 'name', 'key_prefix'].map((k) => {
       const td = document.createElement('td');
-      if (k === 'key_prefix') td.className = 'mono';
+      if (k === 'key_prefix') td.className = 'font-label-code text-label-code text-emerald-700';
       td.textContent = body[k];
       return td;
     });
@@ -120,5 +169,4 @@ async function createKey(evt) {
   }
 }
 </script>
-
-{% endblock %}
+</html>

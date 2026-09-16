@@ -1,45 +1,100 @@
-{% extends "base.html" %}
-{% block heading %}Gateway Console{% endblock %}
-{% block content %}
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+{% include "partials/head.html" %}
+<style>
+.term { background:#0f172a; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.6; }
+.term-line { white-space:pre-wrap; word-break:break-word; color:#e2e8f0; margin:0 0 6px 0; }
+.term-line.dim { color:#94a3b8; }
+.term-line.ok { color:#10b981; }
+.term-line.error { color:#f43f5e; }
+.term-line.val { color:#f8fafc; }
+.term-line a.term-link { color:#10b981; text-decoration:none; }
+</style>
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased selection:bg-emerald-100 selection:text-emerald-900">
+{% include "partials/header.html" %}
+<main class="w-full pt-20 bg-background min-h-[calc(100vh-80px)]">
+<div class="flex flex-col w-full text-on-surface">
 
-<div class="sandbox">
-  <aside class="panel sb-saved">
-    <h2>Saved prompts</h2>
-    <p class="muted" style="padding:0 20px;">Pick one, tweak it, hit Run. Every call goes through the real gateway pipeline and is traced into the dashboard under the &ldquo;Recent Runs&rdquo; and &ldquo;Spend by Agent&rdquo; panels.</p>
-    {% for r in recipes %}
-    <button type="button" class="recipe" onclick="selectRecipe({{ loop.index0 }})">
-      <span class="recipe-name">{{ r.name }}</span>
-      <span class="recipe-meta">{{ r.endpoint }} &middot; {{ r.tag }}</span>
-    </button>
-    {% endfor %}
-  </aside>
+<section class="max-w-[1280px] mx-auto px-margin pt-space-2xl pb-space-3xl w-full">
 
-  <section class="panel sb-console">
-    <div class="sb-request">
-      <span class="method" id="sb-method">POST</span>
-      <span class="mono path" id="sb-path">&nbsp;</span>
-      <span class="badge" id="sb-tag">zero-infra</span>
-    </div>
-    <div class="sb-field">
-      <label for="sb-agent">Agent &mdash; every call is tracked to this id</label>
-      <input id="sb-agent" class="mono" value="support_bot" spellcheck="false" />
-    </div>
-    <div class="sb-field">
-      <label for="sb-body">Request body &mdash; editable, sent as JSON</label>
-      <textarea id="sb-body" class="mono" rows="8" spellcheck="false"></textarea>
-    </div>
-    <div style="display:flex;gap:12px;padding:12px 20px 20px;border-top:1px solid var(--border);">
-      <button type="button" class="action" id="sb-run" onclick="runSandbox()">Run &#9656;</button>
-      <button type="button" class="btn-ghost" onclick="clearOutput()">Clear</button>
-    </div>
-  </section>
+<!-- Page Heading -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md mb-space-xl">
+<div class="space-y-space-xs">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-label-mono-xs text-label-mono-xs uppercase tracking-wider font-semibold">
+<span class="material-symbols-outlined text-[16px]">terminal</span>
+            Try the Gateway Console
+          </div>
+<h1 class="font-headline-xl text-headline-xl text-slate-900">Gateway Console</h1>
+<p class="font-body-md text-body-md text-slate-600 max-w-2xl">
+            Pick a saved prompt, tweak it, and hit Run. Every call goes through the real gateway pipeline and is traced into the dashboard.
+          </p>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span></span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 font-medium uppercase tracking-wider">Live gateway</span>
+</div>
 </div>
 
-<section class="panel">
-  <h2>Console output</h2>
-  <div class="term" id="sb-out"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- Saved prompts -->
+<section class="lg:col-span-4 bg-white border border-slate-200 rounded-xl shadow-md overflow-hidden">
+<div class="flex items-center justify-between px-space-lg py-space-md border-b border-slate-200">
+<h2 class="font-headline-md text-headline-md text-slate-900">Saved prompts</h2>
+<span class="font-label-mono-xs text-label-mono-xs text-emerald-700 px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200/60 font-semibold">{{ recipes|length }}</span>
+</div>
+<div class="p-space-lg space-y-space-2xs">
+<p class="font-body-sm text-body-sm text-slate-600">Pick one, tweak it, hit Run. Every call goes through the real gateway pipeline and is traced into the dashboard under the &ldquo;Recent Runs&rdquo; and &ldquo;Spend by Agent&rdquo; panels.</p>
+</div>
+<div class="divide-y divide-slate-100">
+{% for r in recipes %}
+<button type="button" class="recipe text-left w-full px-space-lg py-space-md hover:bg-slate-50 transition-colors" onclick="selectRecipe({{ loop.index0 }})">
+<span class="recipe-name block font-body-md text-body-md text-slate-900 font-semibold">{{ r.name }}</span>
+<span class="recipe-meta block font-label-mono-xs text-label-mono-xs text-sky-700 mt-0.5">{{ r.endpoint }} &middot; {{ r.tag }}</span>
+</button>
+{% endfor %}
+</div>
 </section>
 
+<!-- Console -->
+<section class="lg:col-span-8 bg-white border border-slate-200 rounded-xl shadow-md overflow-hidden">
+<div class="flex items-center justify-between px-space-lg py-space-md border-b border-slate-200">
+<h2 class="font-headline-md text-headline-md text-slate-900">Request</h2>
+<span class="badge font-label-mono-xs text-label-mono-xs px-space-xs py-space-2xs rounded border" id="sb-tag">zero-infra</span>
+</div>
+<div class="flex items-center gap-space-md px-space-lg py-space-md border-b border-slate-200 bg-slate-50/70">
+<span class="method font-label-code text-label-code font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-space-xs py-0.5" id="sb-method">POST</span>
+<span class="mono font-label-code text-label-code text-slate-900 overflow-x-auto whitespace-nowrap" id="sb-path">&nbsp;</span>
+</div>
+<div class="sb-field p-space-lg border-b border-slate-200 space-y-space-2xs">
+<label for="sb-agent" class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">Agent &mdash; every call is tracked to this id</label>
+<input id="sb-agent" class="font-label-code text-label-code bg-slate-50 border border-slate-300 rounded-lg px-space-md py-space-xs text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 w-full" value="support_bot" spellcheck="false" />
+</div>
+<div class="sb-field p-space-lg border-b border-slate-200 space-y-space-2xs">
+<label for="sb-body" class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-wider font-semibold">Request body &mdash; editable, sent as JSON</label>
+<textarea id="sb-body" class="font-label-code text-label-code bg-slate-50 border border-slate-300 rounded-lg px-space-md py-space-xs text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 w-full resize-y min-h-[180px]" rows="8" spellcheck="false"></textarea>
+</div>
+<div class="flex items-center gap-space-xs p-space-lg">
+<button type="button" class="action inline-flex items-center gap-space-2xs px-space-md py-space-xs rounded-lg bg-emerald-600 text-white font-headline-md text-body-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm" id="sb-run" onclick="runSandbox()">Run &#9656;</button>
+<button type="button" onclick="clearOutput()" class="inline-flex items-center gap-space-2xs px-space-md py-space-xs rounded-lg bg-white border border-slate-200 text-slate-700 font-headline-md text-body-sm hover:bg-slate-50 transition-colors">Clear</button>
+</div>
+</section>
+</div>
+
+<!-- Console output -->
+<section class="bg-white border border-slate-200 rounded-xl shadow-md overflow-hidden mt-space-xl">
+<div class="flex items-center justify-between px-space-lg py-space-md border-b border-slate-200">
+<h2 class="font-headline-md text-headline-md text-slate-900">Console output</h2>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500 font-medium">OpenTelemetry traced</span>
+</div>
+<div class="term p-space-lg max-h-[460px] overflow-y-auto" id="sb-out"></div>
+</section>
+
+</section>
+</div></main>
+{% include "partials/footer.html" %}
+</body>
 <script>
 const RECIPES = {{ recipes_json | safe }};
 const BASE = window.location.origin;
@@ -82,7 +137,8 @@ function selectRecipe(i) {
   document.getElementById("sb-path").textContent = BASE + "/" + pathFor(r);
   const tag = document.getElementById("sb-tag");
   tag.textContent = r.tag;
-  tag.className = "badge tag-" + (r.tag === "admin" ? "red" : r.tag === "zero-infra" ? "green" : "purple");
+  const tagCls = r.tag === "admin" ? "text-rose-700 bg-rose-50 border-rose-200" : r.tag === "zero-infra" ? "text-emerald-700 bg-emerald-50 border-emerald-200" : "text-purple-700 bg-purple-50 border-purple-200";
+  tag.className = "badge font-label-mono-xs text-label-mono-xs px-space-xs py-space-2xs rounded border " + tagCls;
   document.getElementById("sb-agent").value = r.agent_id || "support_bot";
   document.getElementById("sb-body").value = JSON.stringify(r.body, null, 2);
   clearOutput();
@@ -140,5 +196,4 @@ function clearOutput() {
 
 window.addEventListener("load", function () { selectRecipe(0); });
 </script>
-
-{% endblock %}
+</html>

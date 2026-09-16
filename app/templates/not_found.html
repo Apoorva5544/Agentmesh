@@ -1,10 +1,31 @@
-{% extends "base.html" %}
-{% block heading %}Not Found{% endblock %}
-{% block content %}
-<section class="panel">
-  <div class="empty">
-    That run or resource does not exist.
-    <p><a href="/dashboard">&larr; Back to overview</a></p>
-  </div>
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+{% include "partials/head.html" %}
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased selection:bg-emerald-100 selection:text-emerald-900">
+{% include "partials/header.html" %}
+<main class="w-full pt-20 bg-background min-h-[calc(100vh-80px)]">
+<div class="flex flex-col w-full text-on-surface">
+
+<section class="max-w-[1280px] mx-auto px-margin pt-space-2xl pb-space-3xl w-full">
+
+<div class="flex flex-col items-center justify-center py-space-3xl text-center space-y-space-lg">
+<div class="w-20 h-20 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined text-[40px]">question_mark</span>
+</div>
+<div class="space-y-space-xs">
+<h1 class="font-headline-xl text-headline-xl text-slate-900">Not Found</h1>
+<p class="font-body-md text-body-md text-slate-600 max-w-md">That run or resource does not exist.</p>
+</div>
+<a href="/dashboard" class="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-emerald-600 text-white font-headline-md text-body-md hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/20">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Back to overview</span>
+</a>
+</div>
+
 </section>
-{% endblock %}
+</div></main>
+{% include "partials/footer.html" %}
+</body>
+</html>
