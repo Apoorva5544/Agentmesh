@@ -10,6 +10,20 @@
 .term-line.error { color:#f43f5e; }
 .term-line.val { color:#f8fafc; }
 .term-line a.term-link { color:#10b981; text-decoration:none; }
+.sb-tab { border:1px solid #e2e8f0; background:#fff; border-radius:0.75rem; padding:1rem 1.25rem; text-align:left; transition:all 0.15s; cursor:pointer; }
+.sb-tab:hover { border-color:#6ee7b7; }
+.sb-tab .sb-tab-icon { color:#94a3b8; transition:color 0.15s; }
+.sb-tab:hover .sb-tab-icon { color:#059669; }
+.sb-tab .sb-tab-name { color:#0f172a; font-weight:600; font-size:15px; font-family:'Plus Jakarta Sans'; margin-top:6px; }
+.sb-tab .sb-tab-endpoint { color:#0369a1; font-family:'JetBrains Mono'; font-size:11px; margin-top:2px; }
+.sb-tab .sb-tab-desc { color:#64748b; font-size:13px; margin-top:4px; }
+.sb-tab-count { display:inline-flex; align-items:center; justify-content:center; min-width:24px; padding:2px 8px; border-radius:9999px; background:#f1f5f9; border:1px solid #e2e8f0; color:#475569; font-family:'JetBrains Mono'; font-size:11px; font-weight:600; }
+.sb-tab.active { background:#059669; border-color:#059669; box-shadow:0 4px 14px rgba(5,150,105,0.25); }
+.sb-tab.active .sb-tab-icon { color:#a7f3d0; }
+.sb-tab.active .sb-tab-name { color:#fff; }
+.sb-tab.active .sb-tab-endpoint { color:#a7f3d0; }
+.sb-tab.active .sb-tab-desc { color:#d1fae5; }
+.sb-tab.active .sb-tab-count { background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.25); color:#fff; }
 </style>
 </head>
 <body class="bg-background font-body-md text-on-surface antialiased selection:bg-emerald-100 selection:text-emerald-900">
@@ -37,24 +51,57 @@
 </div>
 </div>
 
+<!-- Feature Tabs -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-xl" id="sb-tabs">
+<button type="button" class="sb-tab active" data-kind="mcp" onclick="selectKind('mcp')">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-[20px] sb-tab-icon">terminal</span>
+<span class="sb-tab-count" id="count-mcp"></span>
+</div>
+<div class="sb-tab-name">MCP Tools</div>
+<div class="sb-tab-endpoint">/v1/mcp/invoke</div>
+<div class="sb-tab-desc">Call registered MCP tool servers</div>
+</button>
+<button type="button" class="sb-tab" data-kind="chat" onclick="selectKind('chat')">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-[20px] sb-tab-icon">chat_bubble</span>
+<span class="sb-tab-count" id="count-chat"></span>
+</div>
+<div class="sb-tab-name">Chat Completions</div>
+<div class="sb-tab-endpoint">/v1/chat/completions</div>
+<div class="sb-tab-desc">OpenAI-compatible LLM calls</div>
+</button>
+<button type="button" class="sb-tab" data-kind="agent" onclick="selectKind('agent')">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-[20px] sb-tab-icon">route</span>
+<span class="sb-tab-count" id="count-agent"></span>
+</div>
+<div class="sb-tab-name">Agent Runner</div>
+<div class="sb-tab-endpoint">/v1/agents/{agent}/run</div>
+<div class="sb-tab-desc">Multi-step traced agent runs</div>
+</button>
+<button type="button" class="sb-tab" data-kind="issue_key" onclick="selectKind('issue_key')">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-[20px] sb-tab-icon">vpn_key</span>
+<span class="sb-tab-count" id="count-issue_key"></span>
+</div>
+<div class="sb-tab-name">Virtual API Keys</div>
+<div class="sb-tab-endpoint">/v1/admin/keys</div>
+<div class="sb-tab-desc">Issue scoped virtual keys</div>
+</button>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
 <!-- Saved prompts -->
 <section class="lg:col-span-4 bg-white border border-slate-200 rounded-xl shadow-md overflow-hidden">
 <div class="flex items-center justify-between px-space-lg py-space-md border-b border-slate-200">
 <h2 class="font-headline-md text-headline-md text-slate-900">Saved prompts</h2>
-<span class="font-label-mono-xs text-label-mono-xs text-emerald-700 px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200/60 font-semibold">{{ recipes|length }}</span>
+<span class="sb-tab-count" id="sb-count">{{ recipes|length }}</span>
 </div>
 <div class="p-space-lg space-y-space-2xs">
-<p class="font-body-sm text-body-sm text-slate-600">Pick one, tweak it, hit Run. Every call goes through the real gateway pipeline and is traced into the dashboard under the &ldquo;Recent Runs&rdquo; and &ldquo;Spend by Agent&rdquo; panels.</p>
+<p class="font-body-sm text-body-sm text-slate-600">Pick one, tweak it, hit Run. Every call goes through the real gateway pipeline and is traced into the dashboard.</p>
 </div>
-<div class="divide-y divide-slate-100">
-{% for r in recipes %}
-<button type="button" class="recipe text-left w-full px-space-lg py-space-md hover:bg-slate-50 transition-colors" onclick="selectRecipe({{ loop.index0 }})">
-<span class="recipe-name block font-body-md text-body-md text-slate-900 font-semibold">{{ r.name }}</span>
-<span class="recipe-meta block font-label-mono-xs text-label-mono-xs text-sky-700 mt-0.5">{{ r.endpoint }} &middot; {{ r.tag }}</span>
-</button>
-{% endfor %}
-</div>
+<div id="sb-recipes" class="divide-y divide-slate-100"></div>
 </section>
 
 <!-- Console -->
@@ -98,47 +145,85 @@
 <script>
 const RECIPES = {{ recipes_json | safe }};
 const BASE = window.location.origin;
-let CURRENT = RECIPES[0];
-
 const KIND_PATH = {
   mcp: "v1/mcp/invoke",
   chat: "v1/chat/completions",
   agent: "v1/agents/{agent}/run",
   issue_key: "v1/admin/keys"
 };
+const KIND_LABEL = {
+  mcp: "MCP Tool Invoke",
+  chat: "Chat Completions",
+  agent: "Agent Run",
+  issue_key: "Issue Virtual Key"
+};
+let CURRENT = RECIPES[0];
+let VISIBLE = [];
 
 function pathFor(r) {
   const p = KIND_PATH[r.kind];
   return p.replace("{agent}", encodeURIComponent(r.agent_id || "support_bot"));
 }
 
-function printl(text, cls) {
-  const out = document.getElementById("sb-out");
-  const line = document.createElement("div");
-  line.className = "term-line " + (cls || "");
-  line.textContent = text;
-  out.appendChild(line);
-  out.scrollTop = out.scrollHeight;
+function renderRecipes(list) {
+  VISIBLE = list;
+  const wrap = document.getElementById("sb-recipes");
+  wrap.innerHTML = "";
+  if (!list.length) {
+    wrap.innerHTML = '<div class="px-space-lg py-space-xl text-center text-slate-500 font-body-sm text-body-sm">No saved prompts for this feature.</div>';
+    return;
+  }
+  list.forEach(function (r, i) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "recipe text-left w-full px-space-lg py-space-md hover:bg-slate-50 transition-colors";
+    btn.onclick = function () { selectRecipe(i); };
+    const name = document.createElement("span");
+    name.className = "block font-body-md text-body-md text-slate-900 font-semibold";
+    name.textContent = r.name;
+    const meta = document.createElement("span");
+    meta.className = "block font-label-mono-xs text-label-mono-xs text-sky-700 mt-0.5";
+    meta.textContent = pathFor(r) + "  ·  " + r.tag;
+    btn.appendChild(name);
+    btn.appendChild(meta);
+    wrap.appendChild(btn);
+  });
 }
 
-function printHtml(html) {
-  const out = document.getElementById("sb-out");
-  const line = document.createElement("div");
-  line.className = "term-line";
-  line.innerHTML = html;
-  out.appendChild(line);
-  out.scrollTop = out.scrollHeight;
+function updateCounts() {
+  ["mcp","chat","agent","issue_key"].forEach(function (k) {
+    const el = document.getElementById("count-" + k);
+    if (el) el.textContent = RECIPES.filter(function (r) { return r.kind === k; }).length;
+  });
+}
+
+function selectKind(kind) {
+  document.querySelectorAll(".sb-tab").forEach(function (t) {
+    t.classList.toggle("active", t.getAttribute("data-kind") === kind);
+  });
+  var filtered = RECIPES.filter(function (r) { return r.kind === kind; });
+  renderRecipes(filtered);
+  if (filtered.length) selectRecipe(0);
+  document.getElementById("sb-count").textContent = filtered.length;
+  clearOutput();
+  printl("# " + KIND_LABEL[kind] + "  —  " + pathFor({ kind: kind }), "dim");
+  printl("", "dim");
 }
 
 function selectRecipe(i) {
-  const r = RECIPES[i];
+  var r = VISIBLE[i];
+  if (!r) return;
   CURRENT = r;
   document.getElementById("sb-method").textContent = "POST";
   document.getElementById("sb-path").textContent = BASE + "/" + pathFor(r);
-  const tag = document.getElementById("sb-tag");
+  var tag = document.getElementById("sb-tag");
   tag.textContent = r.tag;
-  const tagCls = r.tag === "admin" ? "text-rose-700 bg-rose-50 border-rose-200" : r.tag === "zero-infra" ? "text-emerald-700 bg-emerald-50 border-emerald-200" : "text-purple-700 bg-purple-50 border-purple-200";
-  tag.className = "badge font-label-mono-xs text-label-mono-xs px-space-xs py-space-2xs rounded border " + tagCls;
+  var tagCls = r.tag === "admin"
+    ? "text-rose-700 bg-rose-50 border-rose-200"
+    : r.tag === "zero-infra"
+      ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+      : "text-purple-700 bg-purple-50 border-purple-200";
+  tag.className = "font-label-mono-xs text-label-mono-xs px-space-xs py-space-2xs rounded border " + tagCls;
   document.getElementById("sb-agent").value = r.agent_id || "support_bot";
   document.getElementById("sb-body").value = JSON.stringify(r.body, null, 2);
   clearOutput();
@@ -146,9 +231,9 @@ function selectRecipe(i) {
 }
 
 async function runSandbox() {
-  const btn = document.getElementById("sb-run");
-  const agent = document.getElementById("sb-agent").value.trim() || "support_bot";
-  let body;
+  var btn = document.getElementById("sb-run");
+  var agent = document.getElementById("sb-agent").value.trim() || "support_bot";
+  var body;
   try {
     body = JSON.parse(document.getElementById("sb-body").value);
   } catch (e) {
@@ -157,28 +242,28 @@ async function runSandbox() {
   }
   btn.disabled = true;
   btn.textContent = "Running\u2026";
-  let auth = "";
+  var auth = "";
   if (CURRENT.kind === "issue_key") auth = ' -H "Authorization: Bearer $ADMIN_API_KEY"';
   printl("$ curl -X POST " + BASE + "/" + pathFor(CURRENT) + auth);
   printl("> " + JSON.stringify(body), "dim");
   try {
-    const res = await fetch(BASE + "/sandbox/run", {
+    var res = await fetch(BASE + "/sandbox/run", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ kind: CURRENT.kind, agent_id: agent, body: body })
     });
-    const data = await res.json();
+    var data = await res.json();
     if (res.ok && data.ok) {
       printl("\u2713 HTTP " + data.status + " OK", "ok");
       if (data.run_id) {
         printHtml('view trace \u2192 <a class="term-link" href="' + BASE + '/dashboard/runs/' + data.run_id + '" target="_blank">/dashboard/runs/' + data.run_id + '</a>');
       }
       if (data.result) {
-        const pretty = (typeof data.result === "string") ? data.result : JSON.stringify(data.result, null, 2);
+        var pretty = (typeof data.result === "string") ? data.result : JSON.stringify(data.result, null, 2);
         printl(pretty, "val");
       }
     } else {
-      const detail = data.detail ? (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail)) : (data.error || "");
+      var detail = data.detail ? (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail)) : (data.error || "");
       printl("\u2717 HTTP " + res.status + (detail ? " \u2014 " + detail : " failed"), "error");
       if (data.result && !data.result.ok) printl(JSON.stringify(data.result, null, 2), "val");
     }
@@ -189,11 +274,33 @@ async function runSandbox() {
   btn.textContent = "Run \u25b8";
 }
 
-function clearOutput() {
-  document.getElementById("sb-out").innerHTML = "";
-  printl("$ Gateway console ready \u2014 pick a saved prompt and hit Run. Calls are authenticated, rate-limited and attributed to the agent.", "dim");
+function printl(text, cls) {
+  var out = document.getElementById("sb-out");
+  var line = document.createElement("div");
+  line.className = "term-line " + (cls || "");
+  line.textContent = text;
+  out.appendChild(line);
+  out.scrollTop = out.scrollHeight;
 }
 
-window.addEventListener("load", function () { selectRecipe(0); });
+function printHtml(html) {
+  var out = document.getElementById("sb-out");
+  var line = document.createElement("div");
+  line.className = "term-line";
+  line.innerHTML = html;
+  out.appendChild(line);
+  out.scrollTop = out.scrollHeight;
+}
+
+function clearOutput() {
+  document.getElementById("sb-out").innerHTML = "";
+  printl("$ Gateway console ready \u2014 pick a feature tab, choose a saved prompt, and hit Run.", "dim");
+  printl("  Calls are authenticated, rate-limited, and attributed to the agent.", "dim");
+}
+
+window.addEventListener("load", function () {
+  updateCounts();
+  selectKind("mcp");
+});
 </script>
 </html>

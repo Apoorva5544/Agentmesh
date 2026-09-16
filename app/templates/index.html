@@ -22,9 +22,9 @@
 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
 <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
 </span>
-<span class="font-label-badge text-label-badge text-emerald-700 uppercase tracking-wider font-semibold">Production Gateway v2.4</span>
+<span class="font-label-badge text-label-badge text-emerald-700 uppercase tracking-wider font-semibold">AgentMesh Control Plane</span>
 <span class="text-slate-300">/</span>
-<span class="font-body-sm text-body-sm text-slate-600">Built for Indian AI Enterprise &amp; Sovereign Global Stacks</span>
+<span class="font-body-sm text-body-sm text-slate-600">OpenAI-, Anthropic- &amp; MCP-compatible gateway</span>
 </div>
 </div>
 <!-- Main Headline & Subtitle -->
@@ -110,9 +110,9 @@
 <!-- Trust Bar / Supported Model Families -->
 <div class="mt-space-2xl pt-space-lg border-t border-slate-200/70">
 <p class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-widest text-center lg:text-left mb-space-md font-semibold">
-          Orchestrating 50M+ production tokens daily across sovereign architectures
+          Supported providers &mdash; bring your own keys &amp; endpoints
         </p>
-<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-space-sm items-center">
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-space-sm items-center">
 <div class="p-space-sm rounded-lg bg-white border border-slate-200 text-center font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
             Sarvam AI
           </div>
@@ -123,13 +123,7 @@
             OpenAI
           </div>
 <div class="p-space-sm rounded-lg bg-white border border-slate-200 text-center font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
-            DeepSeek-V3
-          </div>
-<div class="p-space-sm rounded-lg bg-white border border-slate-200 text-center font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
-            vLLM Host
-          </div>
-<div class="p-space-sm rounded-lg bg-white border border-slate-200 text-center font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
-            Ollama Node
+            Ollama
           </div>
 </div>
 </div>
@@ -148,7 +142,7 @@
           </div>
 <h2 class="font-headline-xl text-headline-xl text-slate-900">Production Request Pipeline</h2>
 <p class="font-body-md text-body-md text-slate-600">
-            How every <span class="font-label-code text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">/v1/chat/completions</span> and <span class="font-label-code text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">/v1/messages</span> invocation passes through AgentMesh in sub-12 milliseconds.
+            How every <span class="font-label-code text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">/v1/chat/completions</span> and <span class="font-label-code text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">/v1/messages</span> invocation is authenticated, cached, compressed, guarded, routed, and attributed in ₹.
           </p>
 </div>
 <div class="flex items-center gap-space-sm">
@@ -167,12 +161,12 @@
 </div>
 <h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">Virtual Authenticate</h3>
 <p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
-              Virtual agent keys validated in sub-millisecond Redis distributed clusters. Tenant rate-limiting enforces strict token allowances.
+              Virtual agent keys validated in Redis with tenant rate-limiting and strict per-agent token allowances.
             </p>
 </div>
 <div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-emerald-700 flex items-center justify-between shadow-xs">
-<span class="text-slate-500">Latency</span>
-<span class="font-bold text-slate-900">0.8 ms</span>
+<span class="text-slate-500">Validation</span>
+<span class="font-bold text-slate-900">Redis-backed</span>
 </div>
 </div>
 <!-- Stage 2 -->
@@ -188,8 +182,8 @@
             </p>
 </div>
 <div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-sky-700 flex items-center justify-between shadow-xs">
-<span class="text-slate-500">Hit Yield</span>
-<span class="font-bold text-slate-900">42.8% Saved</span>
+<span class="text-slate-500">Cache Hit Rate</span>
+<span class="font-bold text-slate-900">{{ "%.1f"|format(data.totals.cache_hit_rate|default(0)) }}%</span>
 </div>
 </div>
 <!-- Stage 3 -->
@@ -205,8 +199,8 @@
             </p>
 </div>
 <div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-emerald-700 flex items-center justify-between shadow-xs">
-<span class="text-slate-500">Reduction</span>
-<span class="font-bold text-slate-900">-34% Tokens</span>
+<span class="text-slate-500">Compression</span>
+<span class="font-bold text-slate-900">Lossless</span>
 </div>
 </div>
 <!-- Stage 4 -->
@@ -218,12 +212,12 @@
 </div>
 <h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">Active Guardrails</h3>
 <p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
-              Pre-provider PII scrub: Aadhaar, PAN card, phone numbers, and PCI-DSS data redacted. Deterministic JSON schema verification on exit.
+              Pre-provider PII scrub: Aadhaar, PAN, phone, email, and credit-card data redacted in place. Deterministic JSON schema verification on exit.
             </p>
 </div>
 <div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-slate-600 flex items-center justify-between shadow-xs">
-<span class="text-slate-500">Compliance</span>
-<span class="font-bold text-emerald-700">DPDP &amp; RBI Ready</span>
+<span class="text-slate-500">Guardrails</span>
+<span class="font-bold text-emerald-700">Aadhaar · PAN · phone</span>
 </div>
 </div>
 <!-- Stage 5 -->
@@ -235,7 +229,7 @@
 </div>
 <h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">Indic Multi-Route</h3>
 <p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
-              Language-detect automatically branches Hindi, Tamil, Telugu, and Marathi prompts to Sarvam-1 for native accuracy and 5x lower cost.
+              Language detection branches Hindi, Tamil, Telugu, and Marathi prompts to Sarvam-1 when it is configured; all other traffic stays on your default provider.
             </p>
 </div>
 <div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-emerald-700 flex items-center justify-between shadow-xs">
@@ -252,12 +246,12 @@
 </div>
 <h3 class="font-headline-md text-headline-md text-slate-900 mb-space-xs">CostGuard FinOps</h3>
 <p class="font-body-sm text-body-sm text-slate-600 leading-relaxed mb-space-md">
-              Agent-level monthly caps in INR. Auto-downgrades expensive models when reaching 80% quota; enforces hard HTTP 402 budget cutoff.
+              Agent-level monthly caps in INR. Auto-downgrades to cheaper fallback models past warn thresholds and enforces a hard HTTP 402 cutoff when the budget is exhausted.
             </p>
 </div>
 <div class="pt-space-sm bg-white border border-slate-200 p-space-xs rounded font-label-mono-xs text-label-mono-xs text-rose-600 flex items-center justify-between shadow-xs">
 <span class="text-slate-500">Hard Cap</span>
-<span class="font-bold text-slate-900">Zero Overspend</span>
+<span class="font-bold text-slate-900">HTTP 402</span>
 </div>
 </div>
 <!-- Stage 7 (Spans 2 cols on lg for visual punch) -->
@@ -274,16 +268,16 @@
 </div>
 <div class="grid grid-cols-3 gap-space-xs pt-space-xs">
 <div class="bg-white border border-slate-200 p-space-xs rounded shadow-xs">
-<div class="font-label-mono-xs text-label-mono-xs text-slate-500">Trace Export</div>
-<div class="font-label-code text-label-code text-emerald-700 font-bold">OTel v1.28</div>
+<div class="font-label-mono-xs text-label-mono-xs text-slate-500">Analytics</div>
+<div class="font-label-code text-label-code text-emerald-700 font-bold">OTel export</div>
 </div>
 <div class="bg-white border border-slate-200 p-space-xs rounded shadow-xs">
 <div class="font-label-mono-xs text-label-mono-xs text-slate-500">Currency</div>
-<div class="font-label-code text-label-code text-sky-700 font-bold">INR (₹) Fixed</div>
+<div class="font-label-code text-label-code text-sky-700 font-bold">INR (₹)</div>
 </div>
 <div class="bg-white border border-slate-200 p-space-xs rounded shadow-xs">
-<div class="font-label-mono-xs text-label-mono-xs text-slate-500">Audit Trail</div>
-<div class="font-label-code text-label-code text-slate-900 font-bold">Immutable</div>
+<div class="font-label-mono-xs text-label-mono-xs text-slate-500">Trace ID</div>
+<div class="font-label-code text-label-code text-slate-900 font-bold">Auditable</div>
 </div>
 </div>
 </div>
@@ -313,41 +307,58 @@
             No more delayed monthly dollar invoices with unpredictable exchange rates. Convert model burn instantly to ₹ with agent-by-agent attribution.
           </p>
 </div>
-<!-- Visual Mock Telemetry Dashboard -->
+{% set month_cost = data.month_totals.cost|default(0) %}
+{% set month_saved = data.month_totals.cost_saved|default(0) %}
+{% set total_req = data.totals.requests|default(0) %}
+{% set cache_rate = data.totals.cache_hit_rate|default(0) %}
+{% set pii_count = data.totals.pii_redactions|default(0) %}
+{% set schema_count = data.totals.schema_requests|default(0) %}
+<!-- Live Gateway Telemetry (real, from the dashboard) -->
 <div class="p-space-md rounded-lg bg-slate-50 border border-slate-200/80 space-y-space-md">
+{% if total_req %}
 <div class="flex items-center justify-between border-b pb-space-xs border-slate-200">
-<span class="font-label-code text-label-code text-slate-900 font-medium">Agent Run: <span class="text-emerald-700 font-semibold">crm-enrichment-worker-09</span></span>
-<span class="font-label-mono-xs text-label-mono-xs text-slate-500">Trace: 8f92-ec20</span>
+<span class="font-label-code text-label-code text-slate-900 font-medium">Gateway Telemetry <span class="text-emerald-700 font-semibold">{{ "{:,}".format(total_req) }} requests</span></span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">live</span>
 </div>
 <!-- Cost Comparison Table -->
 <div class="space-y-space-xs">
 <div class="flex items-center justify-between text-body-sm font-body-sm">
-<span class="text-slate-600">Gross Model Upstream Cost</span>
-<span class="font-label-code text-label-code line-through text-slate-400">₹14.80</span>
+<span class="text-slate-600">Month Model Spend</span>
+<span class="font-label-code text-label-code text-slate-900">&#8377;{{ "{:,.2f}".format(month_cost) }}</span>
 </div>
 <div class="flex items-center justify-between text-body-sm font-body-sm">
-<span class="text-slate-600">Semantic Cache Deduction (-42%)</span>
-<span class="font-label-code text-label-code text-emerald-700 font-semibold">-₹6.21</span>
-</div>
-<div class="flex items-center justify-between text-body-sm font-body-sm">
-<span class="text-slate-600">Lossless Context Compression</span>
-<span class="font-label-code text-label-code text-emerald-700 font-semibold">-₹2.14</span>
+<span class="text-slate-600">{% if month_saved %}Saved via Cache + Compression{% else %}Cache + Compression{% endif %}</span>
+<span class="font-label-code text-label-code text-emerald-700 font-semibold">&#8377;{{ "{:,.2f}".format(month_saved) }}</span>
 </div>
 <div class="flex items-center justify-between text-body-md font-headline-md pt-space-xs border-t border-slate-200">
-<span class="text-slate-900 font-semibold">Net Gateway Invoiced</span>
-<span class="font-label-code text-label-code font-bold text-emerald-700 text-headline-md">₹6.45</span>
+<span class="text-slate-900 font-semibold">Net Gateway Cost</span>
+<span class="font-label-code text-label-code font-bold text-emerald-700 text-headline-md">&#8377;{{ "{:,.2f}".format([0, month_cost - month_saved]|max) }}</span>
 </div>
 </div>
-<!-- Real-Time Progress Visual -->
+<!-- Real-Time Cache Yield Visual -->
 <div class="pt-space-xs">
 <div class="flex justify-between font-label-mono-xs text-label-mono-xs text-slate-500 mb-1">
-<span>MONTHLY BUDGET UTILIZATION</span>
-<span class="font-semibold text-slate-700">₹64,500 / ₹1,00,000 (64.5%)</span>
+<span>LIVE CACHE HIT RATE</span>
+<span class="font-semibold text-slate-700">{{ "%.1f"|format(cache_rate) }}%</span>
 </div>
 <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-<div class="bg-emerald-600 h-full rounded-full w-[64.5%]"></div>
+<div class="bg-emerald-600 h-full rounded-full" style="width: {{ [100, cache_rate]|min }}%"></div>
 </div>
 </div>
+<div class="flex items-center gap-space-md font-label-mono-xs text-label-mono-xs text-slate-500 pt-space-2xs">
+<span>PII redactions: <span class="font-semibold text-slate-800">{{ "{:,}".format(pii_count) }}</span></span>
+<span>Schema-guarded: <span class="font-semibold text-slate-800">{{ "{:,}".format(schema_count) }}</span></span>
+</div>
+{% else %}
+<div class="flex items-center justify-between border-b pb-space-xs border-slate-200">
+<span class="font-label-code text-label-code text-slate-900 font-medium">Gateway Telemetry</span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">live</span>
+</div>
+<p class="font-body-sm text-body-sm text-slate-600">No traffic recorded yet. Route your first request through the gateway and the spend, cache yield, and savings will show up here in real time.</p>
+<div class="flex items-center gap-space-sm">
+<a class="inline-flex items-center gap-space-xs px-space-md py-space-2xs rounded-lg bg-emerald-600 text-white font-headline-md text-body-sm hover:bg-emerald-700 transition-colors shadow-sm" href="/sandbox"><span class="font-semibold">Open Gateway Console</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+</div>
+{% endif %}
 </div>
 </div>
 <!-- Bento 2: Universal MCP Gateway (5 cols) -->
@@ -359,25 +370,21 @@
           </div>
 <h3 class="font-headline-lg text-headline-lg text-slate-900">Universal MCP Tool Routing</h3>
 <p class="font-body-sm text-body-sm text-slate-600">
-            Connect Claude, OpenAI, and open models to standardized Model Context Protocol tool servers across your internal databases and APIs securely.
+            Route Claude, OpenAI, and open-model agents through standardized Model Context Protocol tool servers &mdash; registered in your own control plane.
           </p>
 </div>
 <div class="p-space-md rounded-lg bg-slate-50 border border-slate-200 space-y-space-xs font-label-code text-label-code text-body-sm">
 <div class="flex items-center gap-space-xs text-slate-700">
 <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
-<span>mcp://internal-postgres-cluster</span>
+<span>mcp:local_tools &middot; builtin://local (echo, now)</span>
 </div>
 <div class="flex items-center gap-space-xs text-slate-700">
 <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
-<span>mcp://salesforce-sync-gateway</span>
-</div>
-<div class="flex items-center gap-space-xs text-slate-700">
-<span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
-<span>mcp://github-repo-orchestrator</span>
+<span>Any server registered via POST /v1/mcp/registry</span>
 </div>
 <div class="flex items-center gap-space-xs text-sky-700 font-medium">
-<span class="material-symbols-outlined text-[16px] text-sky-600">shield_lock</span>
-<span>Enforced with Zero-Trust mTLS</span>
+<span class="material-symbols-outlined text-[16px] text-sky-600">terminal</span>
+<span>Invoked per-call &middot; rate-limited &middot; traced &middot; billed in ₹</span>
 </div>
 </div>
 </div>
@@ -387,23 +394,23 @@
 <div class="space-y-space-xs">
 <div class="inline-flex items-center gap-space-2xs text-emerald-700 font-label-mono-xs text-label-mono-xs uppercase font-semibold">
 <span class="material-symbols-outlined text-[16px]">verified</span>
-              Indian Data Sovereignty
+              Privacy Controls
             </div>
-<h3 class="font-headline-md text-headline-md text-slate-900">DPDP Act &amp; RBI Ready</h3>
+<h3 class="font-headline-md text-headline-md text-slate-900">Built-in PII Guardrails</h3>
 <p class="font-body-sm text-body-sm text-slate-600">
-              Designed for regulated Indian banking, fintech, and sovereign healthcare workflows with localized edge nodes in Mumbai and Hyderabad.
+              Promote-sensitive data is redacted before it ever reaches a hosted provider &mdash; Aadhaar, PAN, phone, email, and credit-card patterns, with JSON schema verification on the way out.
             </p>
 </div>
 <div class="p-space-md rounded-lg bg-slate-50 border border-slate-200 space-y-space-2xs">
 <div class="font-headline-md text-body-md text-slate-900 font-semibold">Zero Data Retention Option</div>
 <p class="font-body-sm text-body-sm text-slate-600">
-              Pass-through architecture. No agent prompts or completions are cached to disk without explicit tenant encryption keys.
+              Pass-through architecture. No agent prompts or completions are persisted unless your own cache/key settings opt them in.
             </p>
 </div>
 <div class="p-space-md rounded-lg bg-slate-50 border border-slate-200 space-y-space-2xs">
-<div class="font-headline-md text-body-md text-slate-900 font-semibold">Local Edge Residency</div>
+<div class="font-headline-md text-body-md text-slate-900 font-semibold">Deploy Where You Want</div>
 <p class="font-body-sm text-body-sm text-slate-600">
-              Data remains in-territory. All PII sanitization algorithms execute strictly inside domestic availability zones.
+              Runs in your own environment &mdash; VPC, on-prem, or any host you control. PII sanitation executes in the same process as your gateway.
             </p>
 </div>
 </div>
@@ -426,7 +433,7 @@
             Gain instant control.
           </h2>
 <p class="font-body-md text-body-md text-slate-600 leading-relaxed">
-            AgentMesh is 100% wire-compatible with standard OpenAI, Anthropic, and LangChain SDKs. Swap your <code class="font-label-code text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 text-body-sm">base_url</code> to the gateway endpoint and immediately activate intelligent routing, guardrails, and telemetry.
+            AgentMesh exposes OpenAI- and Anthropic-compatible REST endpoints, so standard SDKs (including LangChain) work with a one-line <code class="font-label-code text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 text-body-sm">base_url</code> swap &mdash; activating routing, guardrails, and telemetry on every call.
           </p>
 <div class="space-y-space-sm pt-space-xs">
 <div class="flex items-center gap-space-sm">
@@ -461,15 +468,15 @@
 <div class="p-space-lg font-label-code text-label-code overflow-x-auto text-slate-200 leading-relaxed bg-slate-900">
 <pre class="text-slate-300"><span class="text-sky-400 font-medium">from</span> openai <span class="text-sky-400 font-medium">import</span> OpenAI
 
-<span class="text-slate-500"># 1. Point standard SDK to your AgentMesh Control Plane</span>
+<span class="text-slate-500"># 1. Point a standard SDK at your gateway endpoint</span>
 client = OpenAI(
-    <span class="text-emerald-300">base_url</span>=<span class="text-emerald-400 font-semibold">"https://gateway.agentmesh.ai/v1"</span>,
-    <span class="text-emerald-300">api_key</span>=<span class="text-emerald-400">"am_live_938fd81c304a99"</span>  <span class="text-slate-500"># Your virtual agent key</span>
+    <span class="text-emerald-300">base_url</span>=<span class="text-emerald-400 font-semibold">"{{ request.base_url }}v1"</span>,
+    <span class="text-emerald-300">api_key</span>=<span class="text-emerald-400">"sk-your-virtual-key"</span>  <span class="text-slate-500"># Issue one via /v1/admin/keys</span>
 )
 
-<span class="text-slate-500"># 2. Call with any model — Gateway intercepts, compresses &amp; routes</span>
+<span class="text-slate-500"># 2. Call with any model — the gateway authenticates, caches, compresses &amp; routes</span>
 response = client.chat.completions.create(
-    <span class="text-emerald-300">model</span>=<span class="text-emerald-400">"auto-indic-hybrid"</span>,  <span class="text-slate-500"># Dynamically routed</span>
+    <span class="text-emerald-300">model</span>=<span class="text-emerald-400">"gpt-4o-mini"</span>,  <span class="text-slate-500"># e.g. openai, anthropic, sarvam, ollama</span>
     <span class="text-emerald-300">messages</span>=[
         {<span class="text-emerald-300">"role"</span>: <span class="text-emerald-400">"user"</span>, <span class="text-emerald-300">"content"</span>: <span class="text-emerald-400">"ग्राहक का खाता विवरण और KYC स्थिति सत्यापित करें"</span>}
     ],
@@ -479,9 +486,8 @@ response = client.chat.completions.create(
     }
 )
 
-<span class="text-slate-500"># &gt;&gt; Intercepted by Sarvam-1 Indic Engine (4.2ms)</span>
-<span class="text-slate-500"># &gt;&gt; PII Scrubbed: 0 Aadhaar violations detected</span>
-<span class="text-slate-500"># &gt;&gt; Invoiced: ₹0.042 (Saved ₹0.21 vs raw upstream)</span>
+<span class="text-slate-500"># &gt;&gt; Authenticated, rate-limited, traced, and attributed in ₹</span>
+<span class="text-slate-500"># &gt;&gt; Response lands in the dashboard under Recent Runs &amp; Spend by Agent</span>
 <span class="text-sky-400">print</span>(response.choices[<span class="text-amber-400">0</span>].message.content)</pre>
 </div>
 </div>
@@ -498,29 +504,27 @@ response = client.chat.completions.create(
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center relative z-10">
 <div class="lg:col-span-7 space-y-space-sm">
 <div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-slate-800 border border-slate-700 text-emerald-400 font-label-mono-xs text-label-mono-xs uppercase tracking-wider font-semibold">
-<span>⚡ Deploy in 2 minutes</span>
-</div>
+<span class="material-symbols-outlined text-[14px]">terminal</span> Try it live
+            </div>
 <h2 class="font-headline-xl text-headline-xl text-white">
-            Deploy your agent gateway today. <br/>
-            Start with 1,000,000 free tokens.
+            Try the gateway yourself. <br/>
+            Route your first request in real time.
           </h2>
 <p class="font-body-md text-body-md text-slate-300 max-w-xl">
-            Plug into your existing stack in under two minutes. Full FinOps telemetry, INR currency tracking, and MCP routing out of the box.
+            Open the console, run a chat, agent, or MCP call, and watch it land in an end-to-end INR trace &mdash; no sign-up, no keys required to explore.
           </p>
 </div>
 <div class="lg:col-span-5 flex flex-col gap-space-sm">
-<form method="get" action="/dashboard/keys" class="flex flex-col sm:flex-row gap-space-xs bg-slate-800/90 border border-slate-700 p-space-2xs rounded-lg shadow-inner">
-<input class="w-full bg-transparent px-space-md py-space-xs font-body-sm text-body-sm text-white placeholder:text-slate-400 focus:outline-none" placeholder="work@enterprise.in" type="email"/>
-<button type="submit" class="shrink-0 px-space-lg py-space-xs rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-headline-md text-body-sm font-bold transition-colors shadow-sm">
-              Get Virtual Key
-            </button>
-</form>
+<div class="flex flex-col sm:flex-row gap-space-xs">
+<a href="/sandbox" class="flex-1 inline-flex items-center justify-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-headline-md text-body-sm font-bold transition-colors shadow-sm"><span>Open Gateway Console</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+<a href="/dashboard" class="inline-flex items-center justify-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-headline-md text-body-sm font-semibold transition-colors shadow-sm"><span>View Live Dashboard</span></a>
+</div>
 <div class="flex items-center justify-center md:justify-start gap-space-md font-label-mono-xs text-label-mono-xs text-slate-400">
 <span class="flex items-center gap-space-2xs">
-<span class="material-symbols-outlined text-[14px] text-emerald-400">check</span> No credit card required
+<span class="material-symbols-outlined text-[14px] text-emerald-400">check</span> OpenAI- &amp; Anthropic-compatible
             </span>
 <span class="flex items-center gap-space-2xs">
-<span class="material-symbols-outlined text-[14px] text-emerald-400">check</span> DPDP Act Certified
+<span class="material-symbols-outlined text-[14px] text-emerald-400">check</span> Every call traced in ₹
             </span>
 </div>
 </div>
