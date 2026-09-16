@@ -59,6 +59,10 @@
 <a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 px-space-xs py-space-2xs transition-colors underline decoration-slate-300 underline-offset-4" href="/docs">
                 Explore API Docs
               </a>
+<span class="text-slate-300">•</span>
+<a class="font-body-sm text-body-sm text-slate-600 hover:text-slate-900 px-space-xs py-space-2xs transition-colors underline decoration-slate-300 underline-offset-4" href="https://github.com/Apoorva5544/Agentmesh" target="_blank" rel="noopener">
+                Source on GitHub
+              </a>
 </div>
 </div>
 </div>
@@ -279,6 +283,169 @@
 <div class="font-label-mono-xs text-label-mono-xs text-slate-500">Trace ID</div>
 <div class="font-label-code text-label-code text-slate-900 font-bold">Auditable</div>
 </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- =====================================================================
+       2.5 SYSTEM ARCHITECTURE (from the GitHub README)
+       ===================================================================== -->
+<section id="architecture" class="w-full bg-white py-space-3xl border-b border-slate-200">
+<div class="max-w-[1280px] mx-auto px-margin">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl gap-space-md">
+<div class="space-y-space-xs max-w-2xl">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-label-mono-xs text-label-mono-xs uppercase tracking-wider font-semibold">
+<span class="material-symbols-outlined text-[16px]">hub</span>
+            System Architecture
+          </div>
+<h2 class="font-headline-xl text-headline-xl text-slate-900">From client to provider, in one pipeline</h2>
+<p class="font-body-md text-body-md text-slate-600">
+            Every request flows through the same gateway &mdash; authenticated, cached, compressed, guarded, routed, budgeted, and traced before it reaches an LLM provider or MCP tool.
+          </p>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">Data flow</span>
+<span class="px-space-xs py-space-2xs rounded bg-emerald-100 text-emerald-800 font-label-code text-label-code font-bold border border-emerald-200">Request &rarr; Response</span>
+</div>
+</div>
+
+<!-- Clients -->
+<div class="p-space-lg rounded-xl bg-slate-50/70 border border-slate-200 mb-space-md">
+<div class="font-label-mono-xs text-label-mono-xs text-slate-500 uppercase tracking-widest font-semibold mb-space-md">Clients</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<div class="flex items-center gap-space-2xs bg-white border border-slate-200 rounded-lg p-space-md font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px] text-emerald-600">edit_note</span>
+              Cursor IDE
+            </div>
+<div class="flex items-center gap-space-2xs bg-white border border-slate-200 rounded-lg p-space-md font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px] text-emerald-600">forum</span>
+              Claude Desktop
+            </div>
+<div class="flex items-center gap-space-2xs bg-white border border-slate-200 rounded-lg p-space-md font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px] text-emerald-600">code</span>
+              OpenCode
+            </div>
+<div class="flex items-center gap-space-2xs bg-white border border-slate-200 rounded-lg p-space-md font-headline-md text-body-md text-slate-800 hover:border-emerald-300 hover:text-emerald-700 shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px] text-emerald-600">apps</span>
+              Custom Apps / Agents
+            </div>
+</div>
+<div class="flex justify-center mt-space-md text-slate-400"><span class="material-symbols-outlined text-[22px]">arrow_downward</span></div>
+</div>
+
+<!-- Gateway Pipeline -->
+<div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow-xl mb-space-md">
+<div class="flex items-center justify-between px-space-md py-space-sm border-b border-slate-800 bg-slate-950/80">
+<div class="flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-[18px] text-emerald-400">shield</span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-200 font-semibold">AgentMesh Gateway &mdash; request pipeline</span>
+</div>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-400">7 stages &middot; in process</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md p-space-lg">
+<div class="p-space-sm rounded-lg bg-slate-800/60 border border-slate-700">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-emerald-400">vpn_key</span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">01</span>
+</div>
+<div class="font-headline-md text-body-sm text-white font-semibold">Virtual Key Auth</div>
+<div class="font-body-sm text-body-sm text-slate-400">+ rate limiting</div>
+</div>
+<div class="p-space-sm rounded-lg bg-slate-800/60 border border-slate-700">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-emerald-400">database</span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">02</span>
+</div>
+<div class="font-headline-md text-body-sm text-white font-semibold">3-Tier Cache</div>
+<div class="font-body-sm text-body-sm text-slate-400">exact &rarr; semantic &rarr; provider-KV</div>
+</div>
+<div class="p-space-sm rounded-lg bg-slate-800/60 border border-slate-700">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-emerald-400">compress</span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">03</span>
+</div>
+<div class="font-headline-md text-body-sm text-white font-semibold">Prompt Compression</div>
+<div class="font-body-sm text-body-sm text-slate-400">lossless token trimming</div>
+</div>
+<div class="p-space-sm rounded-lg bg-slate-800/60 border border-slate-700">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-emerald-400">security</span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">04</span>
+</div>
+<div class="font-headline-md text-body-sm text-white font-semibold">Guardrails</div>
+<div class="font-body-sm text-body-sm text-slate-400">PII redaction + JSON schema</div>
+</div>
+<div class="p-space-sm rounded-lg bg-slate-800/60 border border-slate-700">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-emerald-400">route</span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">05</span>
+</div>
+<div class="font-headline-md text-body-sm text-white font-semibold">Intelligent Router</div>
+<div class="font-body-sm text-body-sm text-slate-400">complexity + language</div>
+</div>
+<div class="p-space-sm rounded-lg bg-slate-800/60 border border-slate-700">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-emerald-400">account_balance_wallet</span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">06</span>
+</div>
+<div class="font-headline-md text-body-sm text-white font-semibold">CostGuard</div>
+<div class="font-body-sm text-body-sm text-slate-400">budget enforcement in ₹</div>
+</div>
+<div class="p-space-sm rounded-lg bg-slate-800/60 border border-slate-700 lg:col-span-2">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="material-symbols-outlined text-[16px] text-emerald-400">insights</span>
+<span class="font-label-mono-xs text-label-mono-xs text-slate-500">07</span>
+</div>
+<div class="font-headline-md text-body-sm text-white font-semibold">OpenTelemetry Tracing</div>
+<div class="font-body-sm text-body-sm text-slate-400">every invocation exported with a trace ID</div>
+</div>
+</div>
+<div class="flex justify-center pb-space-sm text-slate-400"><span class="material-symbols-outlined text-[22px]">arrow_downward</span></div>
+</div>
+
+<!-- Providers / Tools / Storage -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<div class="bg-white border border-slate-200 rounded-xl p-space-lg flex flex-col justify-between shadow-md">
+<div class="space-y-space-sm">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-label-mono-xs text-label-mono-xs font-semibold">
+<span class="material-symbols-outlined text-[16px]">psychology</span>
+              LLM Providers
+            </div>
+<ul class="space-y-space-2xs font-body-sm text-body-sm text-slate-600">
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">OpenAI</span> &mdash; general reasoning</li>
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">Anthropic</span> &mdash; long context &amp; analysis</li>
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">Sarvam-1</span> &mdash; Indic languages</li>
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">Ollama</span> &mdash; local / private models</li>
+</ul>
+</div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl p-space-lg flex flex-col justify-between shadow-md">
+<div class="space-y-space-sm">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-sky-50 border border-sky-200 text-sky-700 font-label-mono-xs text-label-mono-xs font-semibold">
+<span class="material-symbols-outlined text-[16px]">terminal</span>
+              MCP Tool Ecosystem
+            </div>
+<ul class="space-y-space-2xs font-body-sm text-body-sm text-slate-600">
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">Brave Search</span> &mdash; web search</li>
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">GitHub</span> &mdash; repo orchestration</li>
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">PostgreSQL</span> &mdash; SQL queries</li>
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">Browser</span> &mdash; automation</li>
+</ul>
+</div>
+<div class="pt-space-sm font-label-mono-xs text-label-mono-xs text-slate-500">Register any MCP server via <span class="font-label-code text-label-code text-sky-700">/v1/mcp/registry</span></div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl p-space-lg flex flex-col justify-between shadow-md">
+<div class="space-y-space-sm">
+<div class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-slate-100 border border-slate-200 text-slate-700 font-label-mono-xs text-label-mono-xs font-semibold">
+<span class="material-symbols-outlined text-[16px]">storage</span>
+              Storage &amp; Observability
+            </div>
+<ul class="space-y-space-2xs font-body-sm text-body-sm text-slate-600">
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">PostgreSQL</span> &mdash; runs, traces &amp; ledger</li>
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">Redis</span> &mdash; cache + rate limits</li>
+<li><span class="font-label-code text-label-code text-slate-900 font-semibold">OpenTelemetry</span> &mdash; export to Jaeger / Tempo</li>
+</ul>
 </div>
 </div>
 </div>
